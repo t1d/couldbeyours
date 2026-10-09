@@ -147,8 +147,8 @@
   }
   html {
     @apply font-sans;
-    /* Anchor targets land below the sticky header. */
-    scroll-padding-top: 5rem;
+    /* Anchor targets start right below the sticky header (h-16). */
+    scroll-padding-top: 4rem;
   }
   @media (prefers-reduced-motion: no-preference) {
     html {

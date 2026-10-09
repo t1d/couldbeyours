@@ -7,6 +7,7 @@
 // The alt texts describe the intended photo; adjust them when the real photo is in place.
 
 import heroImage from "@/assets/images/hero.jpg"
+import portraitImage from "@/assets/images/svenja.jpg"
 
 export const site = {
   name: "couldbeyours",
@@ -47,5 +48,21 @@ export const hero = {
     src: heroImage,
     // TODO: replace the placeholder photo and describe it here.
     alt: "Hände legen ein Schnittmuster auf hellen Leinenstoff, daneben Schneiderkreide und Massband.",
+  },
+}
+
+export const about = {
+  eyebrow: "Über mich",
+  title: "Hallo, ich bin Svenja.",
+  // TODO: replace with Svenja's own story; the facts below are invented placeholders.
+  paragraphs: [
+    "Schon als Kind sass ich am liebsten neben der Nähmaschine meiner Grossmutter. Aus der Neugier von damals ist ein Beruf geworden: Ich habe Bekleidungsgestalterin gelernt und in verschiedenen Ateliers Erfahrung gesammelt, bevor ich mit couldbeyours meinen eigenen Raum eröffnet habe.",
+    "Mich begeistern Kleider, die bleiben – Stücke, die gut sitzen, lange halten und eine Geschichte erzählen. Darum nehme ich mir Zeit: fürs Zuhören, fürs genaue Messen und für die kleinen Details, die man erst auf den zweiten Blick sieht.",
+    "Ob ein neuer Saum für die Lieblingshose oder ein Kleid von Grund auf: Ich freue mich auf dich und deine Ideen.",
+  ],
+  image: {
+    src: portraitImage,
+    // TODO: replace the placeholder photo and describe it here.
+    alt: "Svenja in ihrem Atelier, im Hintergrund Stoffballen und eine Schneiderpuppe.",
   },
 }

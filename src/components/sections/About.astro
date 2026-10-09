@@ -1,0 +1,31 @@
+---
+import { Picture } from "astro:assets"
+import SectionHeading from "@/components/SectionHeading.astro"
+import { about, anchors } from "@/lib/content"
+
+const headingId = `${anchors.about}-titel`
+---
+
+<section id={anchors.about} aria-labelledby={headingId} class="bg-linen-deep">
+  <div class="mx-auto max-w-6xl px-5 py-20 sm:px-8 md:py-28 lg:grid lg:grid-cols-12 lg:items-center lg:gap-16">
+    <div class="lg:col-span-5">
+      <Picture
+        src={about.image.src}
+        alt={about.image.alt}
+        formats={["avif", "webp"]}
+        widths={[400, 600, 900, 1200]}
+        sizes="(min-width: 1152px) 420px, (min-width: 1024px) 36vw, (min-width: 640px) 28rem, 100vw"
+        class="aspect-4/5 w-full object-cover sm:max-w-md"
+      />
+    </div>
+
+    <div class="mt-12 lg:col-span-7 lg:mt-0">
+      <SectionHeading eyebrow={about.eyebrow} title={about.title} id={headingId} />
+      <div class="mt-8 max-w-prose space-y-5 text-lg leading-relaxed">
+        {about.paragraphs.map((paragraph) => (
+          <p>{paragraph}</p>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
