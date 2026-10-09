@@ -1,0 +1,80 @@
+---
+import LogoHeart from "@/components/LogoHeart.astro"
+import { site } from "@/lib/content"
+---
+
+<!-- Intro: the logo (name, then heart) fades in on a plain background, then the whole layer fades
+     out and the page appears underneath. Pure CSS, so it also runs without JavaScript. Decorative
+     only, hence aria-hidden; the page's own h1 carries the name for screen readers. -->
+<script is:inline>
+  // Skip the intro when coming from another page of this site (e.g. the logo link on Impressum),
+  // so it only plays on arrival. Runs before the layer below is parsed, so nothing flashes.
+  try {
+    if (document.referrer && new URL(document.referrer).origin === location.origin) {
+      document.documentElement.classList.add("intro-skip")
+    }
+  } catch {
+    // Unparseable referrer: just play the intro.
+  }
+</script>
+
+<div class="intro fixed inset-0 z-[60] grid place-items-center bg-background" aria-hidden="true">
+  <span class="intro-logo flex items-center gap-[0.3em] font-heading text-5xl font-medium whitespace-nowrap sm:text-7xl">
+    <span class="intro-name tracking-tight">{site.wordmark}</span>
+    <LogoHeart class="intro-heart h-[0.8em] w-auto" />
+  </span>
+</div>
+
+<style>
+  /* Timeline: name fades in 0.2–1.3 s, heart 0.8–1.7 s, logo holds, fades out 2.3–2.75 s; then
+     the empty layer fades out 2.6–3.3 s, so the page fades in on its own instead of crossfading
+     with the logo. */
+  .intro {
+    animation: intro-out 0.7s ease-in-out 2.6s forwards;
+  }
+
+  .intro-logo {
+    animation: intro-out 0.45s ease-in 2.3s forwards;
+  }
+
+  .intro-name {
+    animation: intro-name-in 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s backwards;
+  }
+
+  .intro-heart {
+    animation: intro-heart-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.8s backwards;
+  }
+
+  @keyframes intro-name-in {
+    from {
+      opacity: 0;
+      letter-spacing: 0.08em;
+      transform: translateY(0.25rem);
+    }
+  }
+
+  @keyframes intro-heart-in {
+    from {
+      opacity: 0;
+      transform: scale(0.8) rotate(-8deg);
+    }
+  }
+
+  /* visibility: hidden at the end lets clicks and taps reach the page again. */
+  @keyframes intro-out {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  :global(.intro-skip) .intro {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .intro {
+      display: none;
+    }
+  }
+</style>
