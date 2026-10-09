@@ -17,6 +17,8 @@ import impression06 from "@/assets/images/impression-06.jpg"
 
 export const site = {
   name: "couldbeyours",
+  // The name as written in the logo, next to the heart (src/components/Intro.astro).
+  wordmark: "could be yours",
   // TODO: add the town once it is final, e.g. "couldbeyours – Schneideratelier in Zürich".
   title: "couldbeyours – Schneideratelier",
   // TODO: final meta description (shown by search engines, ~150 characters).
