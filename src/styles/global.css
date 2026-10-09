@@ -3,14 +3,17 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/cormorant-garamond";
 @import "@fontsource-variable/jost";
+@import "@fontsource/courier-prime/700.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --font-heading: "Cormorant Garamond Variable", Georgia, serif;
   --font-sans: "Jost Variable", system-ui, sans-serif;
-  --color-linen: var(--linen);
-  --color-linen-deep: var(--linen-deep);
+  /* The "could be yours" wordmark: a bold typewriter face, as on the flyer. */
+  --font-logo: "Courier Prime", "Courier New", monospace;
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
   --color-sage: var(--sage);
@@ -57,36 +60,34 @@
 }
 
 :root {
-  /* Brand palette: change colours here; components only use these tokens and the semantic
-     tokens below. Contrast ratios are WCAG 2 values against --linen. */
-  --linen: #f7f4ee; /* secondary colour, warm off-white: page background */
-  --linen-deep: #efebe3; /* set-off sections */
-  --ink: #2b2a26; /* text, 13.1:1 */
-  --ink-muted: #5c5f57; /* secondary text, 5.9:1 (5.5:1 on --linen-deep) */
-  --sage: #9caf88; /* accent, sage green: surfaces and lines only, too light for text (2.2:1) */
-  --sage-deep: #4f6350; /* deep sage: buttons, links, focus ring, 5.9:1 both ways */
-  --sage-light: #dde3d5; /* quiet sage surface, --ink on it 11:1 */
-  /* Alternative secondary colours:
-     sand #e8dfcf (instead of --linen-deep, --ink on it 10.9:1),
-     muted terracotta #9a5b43 (second accent, 4.8:1, works as text colour). */
+  /* Brand palette, taken from the flyer: white paper, a cool grey-sage and near-black. Change
+     colours here; components only use these tokens and the semantic tokens below. Contrast
+     ratios are WCAG 2 values against --paper, then --paper-deep and --sage-light. */
+  --paper: #ffffff; /* page background */
+  --paper-deep: #eef0ed; /* set-off sections: 40 % of --sage-light on --paper */
+  --ink: #222422; /* text, 15.6:1 (13.6:1, 11:1) */
+  --ink-muted: #545954; /* secondary text, 7.2:1 (6.2:1, 5:1) */
+  --sage: #8e9b8d; /* accent: lines and underlines only, too light for text (2.9:1) */
+  --sage-deep: #47594a; /* buttons, links, focus ring, 7.5:1 (6.6:1, 5.3:1), --paper on it 7.5:1 */
+  --sage-light: #d4dad3; /* the flyer's sage: large surfaces */
 
-  --background: var(--linen);
+  --background: var(--paper);
   --foreground: var(--ink);
-  --card: var(--linen);
+  --card: var(--paper);
   --card-foreground: var(--ink);
-  --popover: var(--linen);
+  --popover: var(--paper);
   --popover-foreground: var(--ink);
   --primary: var(--sage-deep);
-  --primary-foreground: var(--linen);
+  --primary-foreground: var(--paper);
   --secondary: var(--sage-light);
   --secondary-foreground: var(--ink);
-  --muted: var(--linen-deep);
+  --muted: var(--paper-deep);
   --muted-foreground: var(--ink-muted);
   --accent: var(--sage-light);
   --accent-foreground: var(--ink);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: color-mix(in oklab, var(--ink) 14%, var(--linen));
-  --input: color-mix(in oklab, var(--ink) 14%, var(--linen));
+  --border: color-mix(in oklab, var(--ink) 14%, var(--paper));
+  --input: color-mix(in oklab, var(--ink) 14%, var(--paper));
   --ring: var(--sage-deep);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);

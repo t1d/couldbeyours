@@ -4,9 +4,10 @@ import SiteFooter from "@/components/SiteFooter.astro"
 import SiteHeader from "@/components/SiteHeader.astro"
 import { buildInfo } from "@/lib/build-info"
 import { site } from "@/lib/content"
-// Preload the Latin subsets of both fonts so text renders in the final font right away.
+// Preload the Latin subsets of the fonts so text renders in the final font right away.
 import headingFont from "@fontsource-variable/cormorant-garamond/files/cormorant-garamond-latin-wght-normal.woff2?url"
 import bodyFont from "@fontsource-variable/jost/files/jost-latin-wght-normal.woff2?url"
+import logoFont from "@fontsource/courier-prime/files/courier-prime-latin-700-normal.woff2?url"
 
 interface Props {
   /** Page title; the site name is appended. Omit on the home page. */
@@ -25,12 +26,13 @@ const ogImage = new URL(site.ogImage, Astro.site).href
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#f7f4ee" />
+    <meta name="theme-color" content="#ffffff" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preload" href={headingFont} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={bodyFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={logoFont} as="font" type="font/woff2" crossorigin />
 
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="de_CH" />

@@ -90,9 +90,10 @@ generated files don't follow our Prettier style.
 - **Colours:** the brand palette at the top of `:root` in `src/styles/global.css`. All components
   use these tokens, so changing a value there changes the whole site. Keep text colours at a
   contrast of at least 4.5:1 against the background (the current values are noted next to them).
-- **Fonts:** Cormorant Garamond (headings) and Jost (text), self-hosted via Fontsource packages and
-  set in `@theme` in `global.css`. Swapping one means installing another `@fontsource-variable/*`
-  package and updating the import, the `--font-*` token and the preload in `layouts/main.astro`.
+- **Fonts:** Cormorant Garamond (headings), Jost (text) and Courier Prime Bold (the "could be yours"
+  wordmark, as on the flyer), self-hosted via Fontsource packages and set in `@theme` in
+  `global.css`. Swapping one means installing another `@fontsource*/*` package and updating the
+  import, the `--font-*` token and the preload in `layouts/main.astro`.
 
 ## How changes reach production
 
