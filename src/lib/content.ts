@@ -8,6 +8,12 @@
 
 import heroImage from "@/assets/images/hero.jpg"
 import portraitImage from "@/assets/images/svenja.jpg"
+import impression01 from "@/assets/images/impression-01.jpg"
+import impression02 from "@/assets/images/impression-02.jpg"
+import impression03 from "@/assets/images/impression-03.jpg"
+import impression04 from "@/assets/images/impression-04.jpg"
+import impression05 from "@/assets/images/impression-05.jpg"
+import impression06 from "@/assets/images/impression-06.jpg"
 
 export const site = {
   name: "couldbeyours",
@@ -101,6 +107,49 @@ export const services: { eyebrow: string; title: string; intro: string; items: S
       title: "Beratung",
       text: "Du hast einen Stoff, eine Idee oder ein Kleidungsstück, das nicht ganz stimmt? Wir schauen es gemeinsam an und finden heraus, was möglich ist.",
       price: "Erstgespräch kostenlos",
+    },
+  ],
+}
+
+// TODO: check the handle and link.
+export const instagram = {
+  handle: "couldbeyours",
+  url: "https://www.instagram.com/couldbeyours/",
+}
+
+export const gallery = {
+  eyebrow: "Impressionen",
+  title: "Aus dem Atelier",
+  // TODO: final wording.
+  intro:
+    "Einblicke in meine Arbeit: Stoffe, Details und fertige Stücke. Mehr aus dem Atelier-Alltag zeige ich auf Instagram.",
+  instagramLabel: "Mehr auf Instagram",
+  // TODO: replace the placeholder photos and describe each one. Any number of images works;
+  // multiples of six fill the grid evenly (two columns on phones, three on larger screens).
+  images: [
+    {
+      src: impression01,
+      alt: "Nahaufnahme einer Naht an einem Leinenhemd, mit Stecknadeln fixiert.",
+    },
+    {
+      src: impression02,
+      alt: "Stoffmuster in Salbeigrün, Sand und Naturweiss nebeneinander auf dem Arbeitstisch.",
+    },
+    {
+      src: impression03,
+      alt: "Ein fertiges Kleid an der Schneiderpuppe im Tageslicht.",
+    },
+    {
+      src: impression04,
+      alt: "Die Nähmaschine im Atelier, daneben Garnrollen in warmen Farben.",
+    },
+    {
+      src: impression05,
+      alt: "Hände kürzen den Saum einer Jeans.",
+    },
+    {
+      src: impression06,
+      alt: "Blick ins Atelier mit Zuschneidetisch und Kleiderstange.",
     },
   ],
 }
