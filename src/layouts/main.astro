@@ -1,5 +1,6 @@
 ---
 import "@/styles/global.css"
+import SiteHeader from "@/components/SiteHeader.astro"
 import { buildInfo } from "@/lib/build-info"
 import { site } from "@/lib/content"
 // Preload the Latin subsets of both fonts so text renders in the final font right away.
@@ -49,6 +50,7 @@ const ogImage = new URL(site.ogImage, Astro.site).href
     >
       Zum Inhalt springen
     </a>
+    <SiteHeader />
     <main id="inhalt">
       <slot />
     </main>

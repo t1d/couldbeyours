@@ -16,3 +16,19 @@ export const site = {
   // TODO: replace public/og-image.jpg with a real photo.
   ogImage: "/og-image.jpg",
 }
+
+// Anchor ids of the sections on the home page (they appear in the URL, e.g. /#kontakt).
+export const anchors = {
+  about: "ueber-mich",
+  services: "angebot",
+  gallery: "impressionen",
+  contact: "kontakt",
+} as const
+
+// Header navigation. The links start with "/" so they also work from Impressum and Datenschutz.
+export const nav = [
+  { label: "Über mich", href: `/#${anchors.about}` },
+  { label: "Angebot", href: `/#${anchors.services}` },
+  { label: "Impressionen", href: `/#${anchors.gallery}` },
+  { label: "Kontakt", href: `/#${anchors.contact}` },
+]
