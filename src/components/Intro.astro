@@ -1,0 +1,64 @@
+---
+import { site } from "@/lib/content"
+---
+
+<!-- Intro: the wordmark fades in on a plain background, then the whole layer fades out and the
+     page appears underneath. Pure CSS, so it also runs without JavaScript. Decorative only, hence
+     aria-hidden; the page's own h1 carries the name for screen readers. -->
+<script is:inline>
+  // Skip the intro when coming from another page of this site (e.g. the logo link on Impressum),
+  // so it only plays on arrival. Runs before the layer below is parsed, so nothing flashes.
+  try {
+    if (document.referrer && new URL(document.referrer).origin === location.origin) {
+      document.documentElement.classList.add("intro-skip")
+    }
+  } catch {
+    // Unparseable referrer: just play the intro.
+  }
+</script>
+
+<div class="intro fixed inset-0 z-[60] grid place-items-center bg-background" aria-hidden="true">
+  <span class="intro-wordmark font-heading text-5xl font-medium tracking-tight sm:text-7xl">
+    {site.name}
+  </span>
+</div>
+
+<style>
+  /* Timeline: wordmark fades in 0.2–1.4 s, holds, fades out 1.9–2.35 s; then the empty layer
+     fades out 2.2–2.9 s, so the page fades in on its own instead of crossfading with the name. */
+  .intro {
+    animation: intro-out 0.7s ease-in-out 2.2s forwards;
+  }
+
+  .intro-wordmark {
+    animation:
+      intro-wordmark-in 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.2s backwards,
+      intro-out 0.45s ease-in 1.9s forwards;
+  }
+
+  @keyframes intro-wordmark-in {
+    from {
+      opacity: 0;
+      letter-spacing: 0.08em;
+      transform: translateY(0.25rem);
+    }
+  }
+
+  /* visibility: hidden at the end lets clicks and taps reach the page again. */
+  @keyframes intro-out {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  :global(.intro-skip) .intro {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .intro {
+      display: none;
+    }
+  }
+</style>
