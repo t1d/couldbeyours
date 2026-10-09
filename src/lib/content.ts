@@ -17,11 +17,11 @@ import impression06 from "@/assets/images/impression-06.jpg"
 
 export const site = {
   name: "could be yours",
-  // TODO: add the town once it is final, e.g. "could be yours – Schneideratelier in Zürich".
-  title: "could be yours – Schneideratelier",
-  // TODO: final meta description (shown by search engines, ~150 characters).
+  // TODO: add the town once it is final, e.g. "could be yours – Atelier in Zürich".
+  title: "could be yours – Atelier",
+  // Shown by search engines, up to ~150 characters; same wording as the hero.
   description:
-    "Schneideratelier could be yours: Änderungen, Reparaturen und Massanfertigungen mit viel Sorgfalt und Zeit fürs Detail.",
+    "could be yours – Atelier für handgefertigte Unikate, Schnitt & Design, Accessoires, individuelle Änderungen und Reparaturen.",
   // Served from public/; shown when the page is shared (WhatsApp, Instagram, …). 1200 × 630 px.
   // TODO: replace public/og-image.jpg with a real photo.
   ogImage: "/og-image.jpg",
@@ -44,11 +44,10 @@ export const nav = [
 ]
 
 export const hero = {
-  // TODO: add the town, e.g. "Schneideratelier in Zürich".
-  eyebrow: "Schneideratelier",
-  // The atelier name (site.name) is the main heading; this sentence sits below it.
-  // TODO: final wording.
-  lead: "Ein kleines Atelier für Änderungen, Reparaturen und Massanfertigungen – mit Zeit, Sorgfalt und Freude am Handwerk.",
+  // The atelier name (site.name) is the main heading; the tagline sits right below it, as on the
+  // flyer, and the lead continues it ("Atelier …für handgefertigte Unikate").
+  tagline: "Atelier",
+  lead: "…für handgefertigte Unikate, Schnitt & Design, Accessoires, individuelle Änderungen und Reparaturen",
   cta: { label: "Kontakt aufnehmen", href: `#${anchors.contact}` },
   image: {
     src: heroImage,
@@ -111,10 +110,9 @@ export const services: { eyebrow: string; title: string; intro: string; items: S
   ],
 }
 
-// TODO: check the handle and link.
 export const instagram = {
-  handle: "couldbeyours",
-  url: "https://www.instagram.com/couldbeyours/",
+  handle: "_.couldbeyours._",
+  url: "https://www.instagram.com/_.couldbeyours._/",
 }
 
 export const gallery = {
@@ -154,15 +152,14 @@ export const gallery = {
   ],
 }
 
-// TODO: real email address, WhatsApp number and address. The values below are placeholders
-// (example.com is a reserved test domain, the number does not exist).
-const email = "hallo@example.com"
-const whatsappNumber = "41790000000" // international format, digits only (wa.me link)
-// "41790000000" → "+41 79 000 00 00" (Swiss number format)
+const email = "atelier@couldbeyours.ch"
+const whatsappNumber = "41792191408" // international format, digits only (wa.me link)
+// "41792191408" → "+41 79 219 14 08" (Swiss number format)
 const whatsappDisplay = whatsappNumber.replace(
   /^(\d{2})(\d{2})(\d{3})(\d{2})(\d{2})$/,
   "+$1 $2 $3 $4 $5",
 )
+// TODO: real address; this one is a placeholder.
 const address = { street: "Musterstrasse 1", city: "8000 Musterort" }
 
 export const contact = {
@@ -203,8 +200,8 @@ export const contact = {
 }
 
 export const footer = {
-  // TODO: add the town, as in the hero.
-  tagline: "Schneideratelier",
+  // TODO: add the town once it is final, as in site.title.
+  tagline: "Atelier",
   links: [
     { label: "Impressum", href: "/impressum/" },
     { label: "Datenschutz", href: "/datenschutz/" },
@@ -228,7 +225,7 @@ const postalAddress = [site.name, owner, address.street, address.city, "Schweiz"
 // Swiss business without cookies or tracking, not legal advice.
 export const impressum: LegalPage = {
   title: "Impressum",
-  description: "Impressum des Schneiderateliers could be yours.",
+  description: "Impressum des Ateliers could be yours.",
   updated: "Oktober 2026", // TODO: date of the final version
   sections: [
     {
