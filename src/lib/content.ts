@@ -16,14 +16,12 @@ import impression05 from "@/assets/images/impression-05.jpg"
 import impression06 from "@/assets/images/impression-06.jpg"
 
 export const site = {
-  name: "couldbeyours",
-  // The name as written in the logo, next to the heart (src/components/Intro.astro).
-  wordmark: "could be yours",
-  // TODO: add the town once it is final, e.g. "couldbeyours – Schneideratelier in Zürich".
-  title: "couldbeyours – Schneideratelier",
+  name: "could be yours",
+  // TODO: add the town once it is final, e.g. "could be yours – Schneideratelier in Zürich".
+  title: "could be yours – Schneideratelier",
   // TODO: final meta description (shown by search engines, ~150 characters).
   description:
-    "Schneideratelier couldbeyours: Änderungen, Reparaturen und Massanfertigungen mit viel Sorgfalt und Zeit fürs Detail.",
+    "Schneideratelier could be yours: Änderungen, Reparaturen und Massanfertigungen mit viel Sorgfalt und Zeit fürs Detail.",
   // Served from public/; shown when the page is shared (WhatsApp, Instagram, …). 1200 × 630 px.
   // TODO: replace public/og-image.jpg with a real photo.
   ogImage: "/og-image.jpg",
@@ -64,7 +62,7 @@ export const about = {
   title: "Hallo, ich bin Svenja.",
   // TODO: replace with Svenja's own story; the facts below are invented placeholders.
   paragraphs: [
-    "Schon als Kind sass ich am liebsten neben der Nähmaschine meiner Grossmutter. Aus der Neugier von damals ist ein Beruf geworden: Ich habe Bekleidungsgestalterin gelernt und in verschiedenen Ateliers Erfahrung gesammelt, bevor ich mit couldbeyours meinen eigenen Raum eröffnet habe.",
+    "Schon als Kind sass ich am liebsten neben der Nähmaschine meiner Grossmutter. Aus der Neugier von damals ist ein Beruf geworden: Ich habe Bekleidungsgestalterin gelernt und in verschiedenen Ateliers Erfahrung gesammelt, bevor ich mit could be yours meinen eigenen Raum eröffnet habe.",
     "Mich begeistern Kleider, die bleiben – Stücke, die gut sitzen, lange halten und eine Geschichte erzählen. Darum nehme ich mir Zeit: fürs Zuhören, fürs genaue Messen und für die kleinen Details, die man erst auf den zweiten Blick sieht.",
     "Ob ein neuer Saum für die Lieblingshose oder ein Kleid von Grund auf: Ich freue mich auf dich und deine Ideen.",
   ],
@@ -230,7 +228,7 @@ const postalAddress = [site.name, owner, address.street, address.city, "Schweiz"
 // Swiss business without cookies or tracking, not legal advice.
 export const impressum: LegalPage = {
   title: "Impressum",
-  description: "Impressum des Schneiderateliers couldbeyours.",
+  description: "Impressum des Schneiderateliers could be yours.",
   updated: "Oktober 2026", // TODO: date of the final version
   sections: [
     {
@@ -257,7 +255,7 @@ export const impressum: LegalPage = {
       heading: "Urheberrecht",
       // TODO: credit the photographer, if the photos are not Svenja's own.
       body: [
-        "Texte und Fotos auf dieser Website gehören couldbeyours. Wer sie verwenden möchte, fragt bitte vorher nach.",
+        "Texte und Fotos auf dieser Website gehören could be yours. Wer sie verwenden möchte, fragt bitte vorher nach.",
       ],
     },
   ],
@@ -265,7 +263,7 @@ export const impressum: LegalPage = {
 
 export const privacy: LegalPage = {
   title: "Datenschutzerklärung",
-  description: "Wie couldbeyours mit Personendaten umgeht.",
+  description: "Wie could be yours mit Personendaten umgeht.",
   updated: "Oktober 2026", // TODO: date of the final version
   sections: [
     {
