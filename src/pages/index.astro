@@ -1,36 +1,16 @@
 ---
 import Layout from "@/layouts/main.astro"
-import { buildInfo } from "@/lib/build-info"
-import { DemoDialog } from "@/components/DemoDialog"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import About from "@/components/sections/About.astro"
+import Contact from "@/components/sections/Contact.astro"
+import Gallery from "@/components/sections/Gallery.astro"
+import Hero from "@/components/sections/Hero.astro"
+import Services from "@/components/sections/Services.astro"
 ---
 
-<Layout title="Atelier – Phase 0" description="Platzhalter-Seite zum Testen der Deploy-Pipeline.">
-  <main class="grid min-h-screen place-items-center p-4">
-    <!-- No client:* directive: rendered to static HTML at build time, ships no JS. -->
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Atelier – Phase 0</CardTitle>
-        <CardDescription>
-          Platzhalter. Diese Seite prüft nur, dass Build, CI und Deployment funktionieren.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="text-sm text-muted-foreground">
-        Die Karte ist statisches HTML. Der Button unten ist eine interaktive React-Insel.
-        <p class="mt-2 font-mono text-xs">
-          Build: {buildInfo.branch}@{buildInfo.commit}
-        </p>
-      </CardContent>
-      <CardFooter>
-        <DemoDialog client:load />
-      </CardFooter>
-    </Card>
-  </main>
+<Layout>
+  <Hero />
+  <About />
+  <Services />
+  <Gallery />
+  <Contact />
 </Layout>

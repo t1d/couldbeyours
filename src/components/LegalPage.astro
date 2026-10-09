@@ -1,0 +1,40 @@
+---
+import Layout from "@/layouts/main.astro"
+import type { LegalPage } from "@/lib/content"
+
+interface Props {
+  page: LegalPage
+}
+
+const { page } = Astro.props
+---
+
+<Layout title={page.title} description={page.description}>
+  <article class="mx-auto max-w-3xl px-5 py-16 sm:px-8 md:py-24">
+    <h1 class="text-5xl leading-tight sm:text-6xl">{page.title}</h1>
+
+    {page.sections.map((section) => (
+      <section class="mt-12">
+        <h2 class="text-2xl sm:text-3xl">{section.heading}</h2>
+        <div class="mt-4 max-w-prose space-y-4 leading-relaxed">
+          {section.body.map((block) =>
+            Array.isArray(block) ? (
+              <p>
+                {block.map((line, index) => (
+                  <>
+                    {index > 0 && <br />}
+                    {line}
+                  </>
+                ))}
+              </p>
+            ) : (
+              <p>{block}</p>
+            ),
+          )}
+        </div>
+      </section>
+    ))}
+
+    <p class="mt-16 text-sm text-ink-muted">Stand: {page.updated}</p>
+  </article>
+</Layout>

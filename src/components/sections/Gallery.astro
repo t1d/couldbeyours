@@ -1,0 +1,47 @@
+---
+import { Picture } from "astro:assets"
+import { ArrowUpRight } from "lucide-react"
+import { Instagram } from "@/components/icons/instagram"
+import SectionHeading from "@/components/SectionHeading.astro"
+import { anchors, gallery, instagram } from "@/lib/content"
+
+const headingId = `${anchors.gallery}-titel`
+---
+
+<section id={anchors.gallery} aria-labelledby={headingId} class="bg-linen-deep">
+  <div class="mx-auto max-w-6xl px-5 py-20 sm:px-8 md:py-28">
+    <div class="md:flex md:items-end md:justify-between md:gap-12">
+      <div>
+        <SectionHeading eyebrow={gallery.eyebrow} title={gallery.title} id={headingId} />
+        <p class="mt-6 max-w-md leading-relaxed text-ink-muted">{gallery.intro}</p>
+      </div>
+      <a
+        href={instagram.url}
+        class="group mt-6 inline-flex shrink-0 items-center gap-2 text-sm tracking-wide text-sage-deep underline decoration-sage underline-offset-8 hover:text-ink md:mt-0"
+      >
+        <Instagram className="size-4" strokeWidth={1.5} aria-hidden="true" />
+        {gallery.instagramLabel} <span class="sr-only">(@{instagram.handle})</span>
+        <ArrowUpRight
+          className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+          strokeWidth={1.5}
+          aria-hidden="true"
+        />
+      </a>
+    </div>
+
+    <ul class="mt-12 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 lg:gap-6">
+      {gallery.images.map((image) => (
+        <li>
+          <Picture
+            src={image.src}
+            alt={image.alt}
+            formats={["avif", "webp"]}
+            widths={[300, 450, 600, 900]}
+            sizes="(min-width: 1152px) 360px, (min-width: 1024px) 31vw, 50vw"
+            class="aspect-4/5 w-full object-cover"
+          />
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
