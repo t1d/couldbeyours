@@ -66,3 +66,41 @@ export const about = {
     alt: "Svenja in ihrem Atelier, im Hintergrund Stoffballen und eine Schneiderpuppe.",
   },
 }
+
+export type Service = {
+  title: string
+  text: string
+  /** Optional; leave out to show no price. */
+  price?: string
+}
+
+export const services: { eyebrow: string; title: string; intro: string; items: Service[] } = {
+  eyebrow: "Angebot",
+  title: "Was ich für dich tun kann",
+  // TODO: final wording.
+  intro:
+    "Jedes Stück ist anders. Die Preise sind Richtwerte – was es genau kostet, besprechen wir gemeinsam, bevor ich mit der Arbeit beginne.",
+  // TODO: final services, texts and prices.
+  items: [
+    {
+      title: "Änderungen",
+      text: "Hosen kürzen, die Taille anpassen, Ärmel einnähen: Ich ändere deine Lieblingsstücke so, dass sie wieder sitzen, als wären sie für dich gemacht.",
+      price: "ab CHF 20",
+    },
+    {
+      title: "Massanfertigung",
+      text: "Vom ersten Gespräch über die Wahl des Stoffes bis zur letzten Anprobe entsteht ein Kleidungsstück, das es nur einmal gibt – deines.",
+      price: "nach Offerte",
+    },
+    {
+      title: "Reparaturen",
+      text: "Ein ausgerissener Saum, ein klemmender Reissverschluss, ein Loch im Lieblingspullover: Vieles lässt sich retten. Flicken ist für mich keine Notlösung, sondern Wertschätzung.",
+      price: "ab CHF 15",
+    },
+    {
+      title: "Beratung",
+      text: "Du hast einen Stoff, eine Idee oder ein Kleidungsstück, das nicht ganz stimmt? Wir schauen es gemeinsam an und finden heraus, was möglich ist.",
+      price: "Erstgespräch kostenlos",
+    },
+  ],
+}
