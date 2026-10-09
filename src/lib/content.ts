@@ -4,6 +4,9 @@
 //
 // Images: replace a file in src/assets/images/ (same name) or import a new one below. Astro
 // optimises them at build time (resizing, AVIF/WebP), so originals can be large camera files.
+// The alt texts describe the intended photo; adjust them when the real photo is in place.
+
+import heroImage from "@/assets/images/hero.jpg"
 
 export const site = {
   name: "couldbeyours",
@@ -32,3 +35,17 @@ export const nav = [
   { label: "Impressionen", href: `/#${anchors.gallery}` },
   { label: "Kontakt", href: `/#${anchors.contact}` },
 ]
+
+export const hero = {
+  // TODO: add the town, e.g. "Schneideratelier in Zürich".
+  eyebrow: "Schneideratelier",
+  // The atelier name (site.name) is the main heading; this sentence sits below it.
+  // TODO: final wording.
+  lead: "Ein kleines Atelier für Änderungen, Reparaturen und Massanfertigungen – mit Zeit, Sorgfalt und Freude am Handwerk.",
+  cta: { label: "Kontakt aufnehmen", href: `#${anchors.contact}` },
+  image: {
+    src: heroImage,
+    // TODO: replace the placeholder photo and describe it here.
+    alt: "Hände legen ein Schnittmuster auf hellen Leinenstoff, daneben Schneiderkreide und Massband.",
+  },
+}
