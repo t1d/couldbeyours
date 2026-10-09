@@ -7,4 +7,7 @@
   "assets": {
     "directory": "./dist",
   },
+  // Required by `wrangler preview` (PR preview builds). Preview-only settings, e.g. test API keys
+  // instead of live ones, go in here; everything else is inherited from the top level.
+  "previews": {},
 }
