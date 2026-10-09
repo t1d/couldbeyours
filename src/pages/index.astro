@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/main.astro"
+import { buildInfo } from "@/lib/build-info"
 import { DemoDialog } from "@/components/DemoDialog"
 import {
   Card,
@@ -23,6 +24,9 @@ import {
       </CardHeader>
       <CardContent className="text-sm text-muted-foreground">
         Die Karte ist statisches HTML. Der Button unten ist eine interaktive React-Insel.
+        <p class="mt-2 font-mono text-xs">
+          Build: {buildInfo.branch}@{buildInfo.commit}
+        </p>
       </CardContent>
       <CardFooter>
         <DemoDialog client:load />
