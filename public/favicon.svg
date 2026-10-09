@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-7.5 -5 153 153">
   <style>
-    path { fill: #2b2a26; stroke: #2b2a26; }
+    path { fill: #222422; stroke: #222422; }
     @media (prefers-color-scheme: dark) {
-      path { fill: #f7f4ee; stroke: #f7f4ee; }
+      path { fill: #ffffff; stroke: #ffffff; }
     }
   </style>
   <!-- The logo heart with a 9-unit outline, so the thin brush lines stay visible at 16 px. -->
