@@ -1,14 +1,12 @@
 ---
 import { Picture } from "astro:assets"
-import Seam from "@/components/Seam.astro"
 import SectionHeading from "@/components/SectionHeading.astro"
 import { about, anchors } from "@/lib/content"
 
 const headingId = `${anchors.about}-titel`
 ---
 
-<section id={anchors.about} aria-labelledby={headingId} class="relative bg-sage-light">
-  <Seam class="absolute inset-x-0 top-3" />
+<section id={anchors.about} aria-labelledby={headingId} class="bg-sage-light">
   <div class="mx-auto max-w-6xl px-5 py-20 sm:px-8 md:py-28 lg:grid lg:grid-cols-12 lg:items-center lg:gap-16">
     <div class="lg:col-span-5">
       <Picture
@@ -30,5 +28,4 @@ const headingId = `${anchors.about}-titel`
       </div>
     </div>
   </div>
-  <Seam class="absolute inset-x-0 bottom-3" />
 </section>

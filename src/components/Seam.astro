@@ -11,10 +11,9 @@ const { class: className, ...props } = Astro.props
 <div class:list={["seam h-3 bg-current", className]} aria-hidden="true" {...props}></div>
 
 <style>
-  /* The dashes are an SVG tile used as a mask over the text colour. "round" stretches the tiles
-     slightly so that a whole number fits and no dash is cut off at the edges. */
+  /* The dashes are an SVG tile, repeated sideways, used as a mask over the text colour. */
   .seam {
-    mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='10' viewBox='0 0 240 10' preserveAspectRatio='none'><path d='M2 4.4Q8 4.4 14 5.3M23 4.2Q29 4.1 36 5.0M44 4.3Q49 4.9 54 4.9M61 5.2Q67 5.6 72 5.8M81 4.2Q90 4.7 99 5.6M106 4.7Q112 4.8 117 5.6M126 4.8Q133 4.5 141 5.1M148 5.3Q153 4.9 159 4.9M168 4.6Q175 5.3 182 5.5M189 5.0Q197 5.6 204 5.7M212 4.3Q221 4.8 231 4.9' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/></svg>")
-      0 50% / auto 100% round no-repeat;
+    mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='10' viewBox='0 0 240 10'><path d='M2 4.4Q8 4.4 14 5.3M23 4.2Q29 4.1 36 5.0M44 4.3Q49 4.9 54 4.9M61 5.2Q67 5.6 72 5.8M81 4.2Q90 4.7 99 5.6M106 4.7Q112 4.8 117 5.6M126 4.8Q133 4.5 141 5.1M148 5.3Q153 4.9 159 4.9M168 4.6Q175 5.3 182 5.5M189 5.0Q197 5.6 204 5.7M212 4.3Q221 4.8 231 4.9' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/></svg>")
+      0 50% / auto 100% repeat-x;
   }
 </style>

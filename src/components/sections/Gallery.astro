@@ -2,15 +2,13 @@
 import { Picture } from "astro:assets"
 import { ArrowUpRight } from "lucide-react"
 import { Instagram } from "@/components/icons/instagram"
-import Seam from "@/components/Seam.astro"
 import SectionHeading from "@/components/SectionHeading.astro"
 import { anchors, gallery, instagram } from "@/lib/content"
 
 const headingId = `${anchors.gallery}-titel`
 ---
 
-<section id={anchors.gallery} aria-labelledby={headingId} class="relative bg-paper-deep">
-  <Seam class="absolute inset-x-0 top-3" />
+<section id={anchors.gallery} aria-labelledby={headingId} class="bg-paper-deep">
   <div class="mx-auto max-w-6xl px-5 py-20 sm:px-8 md:py-28">
     <div class="md:flex md:items-end md:justify-between md:gap-12">
       <div>
@@ -46,5 +44,4 @@ const headingId = `${anchors.gallery}-titel`
       ))}
     </ul>
   </div>
-  <Seam class="absolute inset-x-0 bottom-3" />
 </section>
