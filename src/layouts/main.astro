@@ -1,5 +1,6 @@
 ---
 import "@/styles/global.css"
+import SiteFooter from "@/components/SiteFooter.astro"
 import SiteHeader from "@/components/SiteHeader.astro"
 import { buildInfo } from "@/lib/build-info"
 import { site } from "@/lib/content"
@@ -54,5 +55,6 @@ const ogImage = new URL(site.ogImage, Astro.site).href
     <main id="inhalt">
       <slot />
     </main>
+    <SiteFooter />
   </body>
 </html>

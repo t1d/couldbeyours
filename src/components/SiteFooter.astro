@@ -1,0 +1,37 @@
+---
+import { Instagram } from "@/components/icons/instagram"
+import { footer, instagram, site } from "@/lib/content"
+
+const year = new Date().getFullYear()
+const linkClass = "underline-offset-4 transition-colors hover:text-linen hover:underline"
+---
+
+<footer class="bg-ink text-linen/75">
+  <div class="mx-auto flex max-w-6xl flex-col gap-10 px-5 py-14 sm:px-8 md:flex-row md:items-end md:justify-between">
+    <div>
+      <p class="font-heading text-3xl text-linen">{site.name}</p>
+      <p class="mt-1 text-xs tracking-[0.25em] uppercase">{footer.tagline}</p>
+    </div>
+
+    <div class="space-y-4 text-sm md:text-right">
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 md:justify-end">
+        {footer.links.map((link) => (
+          <li>
+            <a href={link.href} class={linkClass}>
+              {link.label}
+            </a>
+          </li>
+        ))}
+        <li>
+          <a href={instagram.url} class:list={["inline-flex items-center gap-1.5", linkClass]}>
+            <Instagram className="size-4" strokeWidth={1.5} aria-hidden="true" />
+            Instagram
+          </a>
+        </li>
+      </ul>
+      <p>
+        © {year} {site.name}
+      </p>
+    </div>
+  </div>
+</footer>
