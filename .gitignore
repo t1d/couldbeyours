@@ -1,0 +1,26 @@
+# build output
+dist/
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+
+# environment variables and local secrets — never commit these
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+
+# Cloudflare Wrangler local state
+.wrangler/
+
+# macOS-specific files
+.DS_Store
+
+# editor settings (shared VS Code settings in .vscode/ are committed on purpose)
+.idea/

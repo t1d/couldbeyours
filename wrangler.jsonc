@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "couldbeyours",
+  // Pins the Workers runtime behaviour; bump deliberately, not automatically.
+  "compatibility_date": "2026-10-09",
+  // Fully static site: Cloudflare serves the Astro build output directly, no Worker script.
+  "assets": {
+    "directory": "./dist",
+  },
+}
