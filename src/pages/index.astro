@@ -1,5 +1,8 @@
 ---
 import Layout from "@/layouts/main.astro"
+
+// DELIBERATE TYPE ERROR for the Phase 0 CI test. This PR must fail and must never be merged.
+const year: number = "2026"
 import { DemoDialog } from "@/components/DemoDialog"
 import {
   Card,
@@ -16,7 +19,7 @@ import {
     <!-- No client:* directive: rendered to static HTML at build time, ships no JS. -->
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Atelier – Phase 0</CardTitle>
+        <CardTitle>Atelier – Phase 0 ({year})</CardTitle>
         <CardDescription>
           Platzhalter. Diese Seite prüft nur, dass Build, CI und Deployment funktionieren.
         </CardDescription>
