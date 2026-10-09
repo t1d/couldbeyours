@@ -3,8 +3,9 @@
 Website for a tailoring atelier in Switzerland: a marketing/portfolio site now, a small shop later.
 German first.
 
-**Status:** Phase 0. The site is a single placeholder page whose job is to prove that build, CI,
-preview deployments and production deployments all work.
+**Status:** Phase 1. The home page is a one-pager (hero, Über mich, Angebot, Impressionen, Kontakt)
+with Impressum and Datenschutz as separate pages. Copy, contact details and images are still
+placeholders, see [Editing content](#editing-content).
 
 ## Stack
 
@@ -55,19 +56,43 @@ Run `npm run check` before pushing; if it passes locally, CI will pass.
 
 ```
 src/
-  pages/          one file per route (index.astro → /)
-  layouts/        page shells (<html>, <head>, global CSS)
-  components/     site components; interactive ones are React .tsx files
-  components/ui/  shadcn/ui components (generated, then owned by us)
-  lib/            helpers
-  styles/         global.css: Tailwind setup and theme tokens
-public/           files served as-is (favicon)
-wrangler.jsonc    Cloudflare deployment config
-.github/          CI workflow
+  pages/                one file per route (index.astro → /, impressum.astro → /impressum/)
+  layouts/              page shells (<html>, <head> with SEO tags, header, footer)
+  components/           site components; interactive ones are React .tsx files
+  components/sections/  the sections of the home page, in page order
+  components/icons/     icons Lucide does not ship (brand glyphs)
+  components/ui/        shadcn/ui components (generated, then owned by us)
+  lib/content.ts        all copy, contact details, links and image imports
+  lib/                  other helpers
+  assets/images/        photos, optimised at build time by astro:assets
+  styles/               global.css: Tailwind setup, fonts and theme tokens
+public/                 files served as-is (favicons, Open Graph image)
+wrangler.jsonc          Cloudflare deployment config
+.github/                CI workflow
 ```
+
+The site ships almost no JavaScript: everything is static HTML except a few inline lines that close
+the mobile menu (which itself uses the native popover API). Reach for a React island only when a
+feature really needs client-side state.
 
 Adding a shadcn/ui component: `npx shadcn@latest add <name>`, then `npm run format`, because
 generated files don't follow our Prettier style.
+
+## Editing content
+
+- **Text, services, prices, contact details, links:** `src/lib/content.ts`. Components only read
+  from there. Placeholders are marked `TODO`; `grep -rn TODO src astro.config.mjs` lists what is
+  still open before launch (including the domain in `astro.config.mjs`).
+- **Photos:** replace the files in `src/assets/images/` (keep the names, or change the imports at
+  the top of `content.ts`) and update the alt texts next to them. Originals can be full-size
+  camera files; the build generates AVIF/WebP in several widths. Portrait 4:5 suits every slot.
+- **Sharing image:** `public/og-image.jpg`, 1200 × 630 px.
+- **Colours:** the brand palette at the top of `:root` in `src/styles/global.css`. All components
+  use these tokens, so changing a value there changes the whole site. Keep text colours at a
+  contrast of at least 4.5:1 against the background (the current values are noted next to them).
+- **Fonts:** Cormorant Garamond (headings) and Jost (text), self-hosted via Fontsource packages and
+  set in `@theme` in `global.css`. Swapping one means installing another `@fontsource-variable/*`
+  package and updating the import, the `--font-*` token and the preload in `layouts/main.astro`.
 
 ## How changes reach production
 
