@@ -3,6 +3,7 @@ import { Picture } from "astro:assets"
 import { ArrowRight } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button"
 import { hero, site } from "@/lib/content"
+import { cn } from "@/lib/utils"
 ---
 
 <section class="mx-auto max-w-6xl px-5 pt-10 pb-16 sm:px-8 md:pt-16 lg:grid lg:grid-cols-12 lg:items-end lg:gap-12 lg:pb-24">
@@ -12,10 +13,12 @@ import { hero, site } from "@/lib/content"
     <p class="mt-6 max-w-md text-lg leading-relaxed text-ink-muted">{hero.lead}</p>
     <a
       href={hero.cta.href}
-      class={buttonVariants({
-        size: "lg",
-        className: "mt-8 h-12 gap-2 px-6 text-sm tracking-wide hover:bg-ink",
-      })}
+      class={cn(
+        buttonVariants({ size: "lg" }),
+        // cva only appends className; cn() resolves the conflicts with the base button classes.
+        // Full-strength focus ring with a gap, since the default 50 % ring is too faint here.
+        "mt-8 h-12 gap-2 px-6 text-sm tracking-wide hover:bg-ink focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+      )}
     >
       {hero.cta.label}
       <ArrowRight data-icon="inline-end" strokeWidth={1.5} aria-hidden="true" />
