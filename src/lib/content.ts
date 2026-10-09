@@ -153,3 +153,51 @@ export const gallery = {
     },
   ],
 }
+
+// TODO: real email address, WhatsApp number and address. The values below are placeholders
+// (example.com is a reserved test domain, the number does not exist).
+const email = "hallo@example.com"
+const whatsappNumber = "41790000000" // international format, digits only (wa.me link)
+// "41790000000" → "+41 79 000 00 00" (Swiss number format)
+const whatsappDisplay = whatsappNumber.replace(
+  /^(\d{2})(\d{2})(\d{3})(\d{2})(\d{2})$/,
+  "+$1 $2 $3 $4 $5",
+)
+const address = { street: "Musterstrasse 1", city: "8000 Musterort" }
+
+export const contact = {
+  eyebrow: "Kontakt",
+  title: "Schreib mir",
+  // TODO: final wording.
+  intro:
+    "Am einfachsten erreichst du mich per WhatsApp oder E-Mail. Erzähl mir kurz, worum es geht – gerne mit einem Foto. Ich melde mich innert ein bis zwei Arbeitstagen.",
+  channels: {
+    email: {
+      label: "E-Mail",
+      display: email,
+      href: `mailto:${email}?subject=${encodeURIComponent("Anfrage ans Atelier")}`,
+    },
+    whatsapp: {
+      label: "WhatsApp",
+      display: whatsappDisplay,
+      href: `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Hallo Svenja, ")}`,
+    },
+    instagram: {
+      label: "Instagram",
+      display: `@${instagram.handle}`,
+      href: instagram.url,
+    },
+  },
+  address: {
+    title: "Atelier",
+    name: site.name,
+    ...address,
+    mapLabel: "Auf der Karte zeigen",
+    mapUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${address.street}, ${address.city}`)}`,
+  },
+  hours: {
+    title: "Öffnungszeiten",
+    // TODO: fixed opening hours, if any, e.g. "Di–Fr, 9–12 Uhr".
+    lines: ["Termine nach Vereinbarung"],
+  },
+}

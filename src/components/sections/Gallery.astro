@@ -1,7 +1,7 @@
 ---
 import { Picture } from "astro:assets"
 import { ArrowUpRight } from "lucide-react"
-import InstagramIcon from "@/components/icons/InstagramIcon.astro"
+import { Instagram } from "@/components/icons/instagram"
 import SectionHeading from "@/components/SectionHeading.astro"
 import { anchors, gallery, instagram } from "@/lib/content"
 
@@ -19,7 +19,7 @@ const headingId = `${anchors.gallery}-titel`
         href={instagram.url}
         class="group mt-6 inline-flex shrink-0 items-center gap-2 text-sm tracking-wide text-sage-deep underline decoration-sage underline-offset-8 hover:text-ink md:mt-0"
       >
-        <InstagramIcon class="size-4" />
+        <Instagram className="size-4" strokeWidth={1.5} aria-hidden="true" />
         {gallery.instagramLabel} <span class="sr-only">(@{instagram.handle})</span>
         <ArrowUpRight
           className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"

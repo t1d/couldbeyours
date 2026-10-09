@@ -1,0 +1,79 @@
+---
+import { ArrowRight, Mail, MessageCircle } from "lucide-react"
+import { Instagram } from "@/components/icons/instagram"
+import SectionHeading from "@/components/SectionHeading.astro"
+import { anchors, contact } from "@/lib/content"
+
+const headingId = `${anchors.contact}-titel`
+const channels = [
+  { ...contact.channels.whatsapp, Icon: MessageCircle },
+  { ...contact.channels.email, Icon: Mail },
+  { ...contact.channels.instagram, Icon: Instagram },
+]
+---
+
+<section id={anchors.contact} aria-labelledby={headingId}>
+  <div class="mx-auto max-w-6xl px-5 py-20 sm:px-8 md:py-28 lg:grid lg:grid-cols-12 lg:gap-16">
+    <div class="lg:col-span-7">
+      <SectionHeading eyebrow={contact.eyebrow} title={contact.title} id={headingId} />
+      <p class="mt-6 max-w-md leading-relaxed text-ink-muted">{contact.intro}</p>
+
+      <ul class="mt-10 divide-y border-y">
+        {channels.map(({ Icon, ...channel }) => (
+          <li>
+            <a
+              href={channel.href}
+              class="group flex items-center gap-4 py-5 transition-colors hover:text-sage-deep sm:gap-6"
+            >
+              <Icon
+                className="size-5 shrink-0 text-sage-deep"
+                strokeWidth={1.5}
+                aria-hidden="true"
+              />
+              <span class="min-w-0 flex-1">
+                <span class="block text-xs tracking-[0.2em] text-ink-muted uppercase">
+                  {channel.label}
+                </span>
+                <span class="mt-1 block font-heading text-2xl lining-nums [overflow-wrap:anywhere] sm:text-3xl">
+                  {channel.display}
+                </span>
+              </span>
+              <ArrowRight
+                className="size-5 shrink-0 transition-transform group-hover:translate-x-1"
+                strokeWidth={1.5}
+                aria-hidden="true"
+              />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="mt-12 space-y-10 bg-sage-light p-8 sm:p-10 lg:col-span-5 lg:mt-0 lg:self-start">
+      <div>
+        <h3 class="text-2xl">{contact.address.title}</h3>
+        <address class="mt-3 leading-relaxed not-italic">
+          {contact.address.name}
+          <br />
+          {contact.address.street}
+          <br />
+          {contact.address.city}
+        </address>
+        <a
+          href={contact.address.mapUrl}
+          class="mt-3 inline-block text-sm text-sage-deep underline decoration-sage underline-offset-4 hover:text-ink"
+        >
+          {contact.address.mapLabel}
+        </a>
+      </div>
+      <div>
+        <h3 class="text-2xl">{contact.hours.title}</h3>
+        <ul class="mt-3 leading-relaxed">
+          {contact.hours.lines.map((line) => (
+            <li>{line}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
