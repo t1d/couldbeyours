@@ -72,8 +72,9 @@ wrangler.jsonc          Cloudflare deployment config
 ```
 
 The site ships almost no JavaScript: everything is static HTML except a few inline lines that close
-the mobile menu (which itself uses the native popover API). Reach for a React island only when a
-feature really needs client-side state.
+the mobile menu (which itself uses the native popover API) and a small script that lets visitors
+drag the photo wall in Impressionen and opens its photos large. Both work without it, just more
+plainly. Reach for a React island only when a feature really needs client-side state.
 
 Adding a shadcn/ui component: `npx shadcn@latest add <name>`, then `npm run format`, because
 generated files don't follow our Prettier style.

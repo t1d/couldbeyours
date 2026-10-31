@@ -1,15 +1,68 @@
 ---
-import { Picture } from "astro:assets"
-import { ArrowUpRight } from "lucide-react"
+import { getImage, Picture } from "astro:assets"
+import { ArrowLeft, ArrowRight, ArrowUpRight, X } from "lucide-react"
 import { Instagram } from "@/components/icons/instagram"
+import Seam from "@/components/Seam.astro"
 import SectionHeading from "@/components/SectionHeading.astro"
 import { anchors, gallery, instagram } from "@/lib/content"
 
 const headingId = `${anchors.gallery}-titel`
+
+// The photo wall: tiles in different sizes and heights, like pictures pinned to a board. The
+// pattern repeats after six photos; each `sizes` matches its tile's width.
+const tiles = [
+  {
+    width: "w-[78vw] sm:w-96",
+    aspect: "aspect-4/5",
+    offset: "",
+    sizes: "(min-width: 640px) 24rem, 78vw",
+  },
+  {
+    width: "w-[62vw] sm:w-72",
+    aspect: "aspect-square",
+    offset: "mt-10 sm:mt-24",
+    sizes: "(min-width: 640px) 18rem, 62vw",
+  },
+  {
+    width: "w-[70vw] sm:w-80",
+    aspect: "aspect-3/4",
+    offset: "mt-4 sm:mt-8",
+    sizes: "(min-width: 640px) 20rem, 70vw",
+  },
+  {
+    width: "w-[84vw] sm:w-[26rem]",
+    aspect: "aspect-square",
+    offset: "mt-14 sm:mt-32",
+    sizes: "(min-width: 640px) 26rem, 84vw",
+  },
+  {
+    width: "w-[62vw] sm:w-72",
+    aspect: "aspect-4/5",
+    offset: "mt-2 sm:mt-4",
+    sizes: "(min-width: 640px) 18rem, 62vw",
+  },
+  {
+    width: "w-[70vw] sm:w-80",
+    aspect: "aspect-3/4",
+    offset: "mt-8 sm:mt-20",
+    sizes: "(min-width: 640px) 20rem, 70vw",
+  },
+]
+
+const number = (index: number) => String(index + 1).padStart(2, "0")
+
+// Without JavaScript a tile links straight to a large version of its photo; with it, the photo
+// opens in the lightbox at the end of this section instead.
+const largeImages = await Promise.all(
+  gallery.images.map((image) => getImage({ src: image.src, width: 1600, format: "webp" })),
+)
+
+const roundButton =
+  "inline-flex size-11 items-center justify-center rounded-full border border-ink/20 transition-colors hover:border-ink disabled:opacity-30 disabled:hover:border-ink/20"
 ---
 
-<section id={anchors.gallery} aria-labelledby={headingId} class="bg-paper-deep">
-  <div class="mx-auto max-w-6xl px-5 py-20 sm:px-8 md:py-28">
+<section id={anchors.gallery} aria-labelledby={headingId} class="bg-paper-deep" data-gallery>
+  <div class="mx-auto max-w-6xl px-5 pt-20 sm:px-8 md:pt-28">
     <div class="md:flex md:items-end md:justify-between md:gap-12">
       <div>
         <SectionHeading eyebrow={gallery.eyebrow} title={gallery.title} id={headingId} />
@@ -28,20 +81,503 @@ const headingId = `${anchors.gallery}-titel`
         />
       </a>
     </div>
-
-    <ul class="mt-12 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 lg:gap-6">
-      {gallery.images.map((image) => (
-        <li>
-          <Picture
-            src={image.src}
-            alt={image.alt}
-            formats={["avif", "webp"]}
-            widths={[300, 450, 600, 900]}
-            sizes="(min-width: 1152px) 360px, (min-width: 1024px) 31vw, 50vw"
-            class="aspect-4/5 w-full object-cover"
-          />
-        </li>
-      ))}
-    </ul>
   </div>
+
+  <!-- The wall scrolls sideways: natively with touch and trackpads, by dragging with a mouse (see
+       the script). It runs to the screen edges, so the next photo always peeks in. -->
+  <ul
+    class="wall relative mt-12 flex items-start gap-5 overflow-x-auto pt-2 pb-4 sm:gap-8"
+    data-wall
+  >
+    {gallery.images.map((image, index) => {
+      const tile = tiles[index % tiles.length]
+      return (
+        <li class:list={["tile shrink-0", tile.width, tile.offset]} style={`--i: ${index}`}>
+          <figure>
+            <a
+              href={largeImages[index].src}
+              class="tile-frame block overflow-hidden"
+              data-index={index}
+            >
+              <Picture
+                src={image.src}
+                alt={image.alt}
+                formats={["avif", "webp"]}
+                widths={[320, 480, 640, 960]}
+                sizes={tile.sizes}
+                class={`w-full object-cover ${tile.aspect}`}
+              />
+              <span class="sr-only">(Grossansicht)</span>
+            </a>
+            <figcaption class="mt-3 flex items-baseline gap-3 text-sm text-ink-muted">
+              <span class="font-logo text-xs font-bold text-ink">{number(index)}</span>
+              {image.caption}
+            </figcaption>
+          </figure>
+        </li>
+      )
+    })}
+  </ul>
+
+  <div class="mx-auto max-w-6xl px-5 pb-20 sm:px-8 md:pb-28">
+    <!-- Shown by the script: a seam that gets stitched while scrolling through the wall, and buttons
+         for anyone who would rather click than drag. -->
+    <div class="mt-8 flex items-center gap-5 sm:gap-8" data-controls hidden>
+      <div class="relative flex-1 text-sage" aria-hidden="true">
+        <Seam />
+        <Seam
+          class="absolute inset-0 text-ink"
+          style="clip-path: inset(0 calc((1 - var(--progress, 0)) * 100%) 0 0)"
+        />
+      </div>
+      <p class="hidden text-xs tracking-[0.25em] text-ink-muted uppercase sm:block">
+        <span class="pointer-coarse:hidden">{gallery.hint.drag}</span>
+        <span class="hidden pointer-coarse:inline">{gallery.hint.swipe}</span>
+      </p>
+      <div class="flex gap-2">
+        <button type="button" class={roundButton} data-prev>
+          <ArrowLeft className="size-5" strokeWidth={1.5} aria-hidden="true" />
+          <span class="sr-only">Zurückblättern</span>
+        </button>
+        <button type="button" class={roundButton} data-next>
+          <ArrowRight className="size-5" strokeWidth={1.5} aria-hidden="true" />
+          <span class="sr-only">Weiterblättern</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <dialog
+    class="lightbox m-0 h-dvh max-h-none w-full max-w-none border-0 bg-paper p-0 text-ink"
+    aria-label={gallery.title}
+    data-lightbox
+  >
+    <div class="grid h-full grid-rows-[auto_minmax(0,1fr)_auto]">
+      <div class="flex h-16 items-center justify-end px-5 sm:px-8">
+        <button
+          type="button"
+          class="-mr-2 inline-flex size-11 items-center justify-center"
+          data-close
+        >
+          <X className="size-6" strokeWidth={1.5} aria-hidden="true" />
+          <span class="sr-only">Schliessen</span>
+        </button>
+      </div>
+
+      <div class="stage px-5 sm:px-8" data-stage>
+        {gallery.images.map((image) => (
+          <figure class="flex h-full flex-col items-center justify-center" data-slide hidden>
+            <Picture
+              src={image.src}
+              alt={image.alt}
+              formats={["avif", "webp"]}
+              widths={[800, 1200, 1600, 2000]}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              class="h-auto max-h-[calc(100dvh-12rem)] w-auto max-w-full object-contain"
+            />
+            <figcaption class="mt-4 text-center text-sm text-ink-muted">{image.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
+
+      <div class="flex items-center justify-center gap-6 py-5">
+        <button type="button" class={roundButton} data-prev>
+          <ArrowLeft className="size-5" strokeWidth={1.5} aria-hidden="true" />
+          <span class="sr-only">Vorheriges Bild</span>
+        </button>
+        <p class="min-w-20 text-center font-logo text-sm font-bold" aria-live="polite">
+          <span aria-hidden="true" data-counter></span>
+          <span class="sr-only" data-counter-label></span>
+        </p>
+        <button type="button" class={roundButton} data-next>
+          <ArrowRight className="size-5" strokeWidth={1.5} aria-hidden="true" />
+          <span class="sr-only">Nächstes Bild</span>
+        </button>
+      </div>
+    </div>
+  </dialog>
 </section>
+
+<style>
+  /* The wall runs to the screen edges but starts in line with the page content (max-w-6xl with
+     px-5, sm:px-8). */
+  .wall {
+    --inset: max(1.25rem, calc((100% - 72rem) / 2 + 1.25rem));
+    padding-inline: var(--inset);
+    scroll-padding-inline: var(--inset);
+    overscroll-behavior-x: contain;
+  }
+
+  @media (min-width: 40rem) {
+    .wall {
+      --inset: max(2rem, calc((100% - 72rem) / 2 + 2rem));
+    }
+  }
+
+  /* Once the script runs, the stitched line below the wall takes over from the scrollbar. */
+  .wall.is-enhanced {
+    scrollbar-width: none;
+  }
+
+  .wall.is-enhanced::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Touchscreens: one swipe moves photo by photo. Mouse: free dragging with a glide. */
+  @media (pointer: coarse) {
+    .wall {
+      scroll-snap-type: x mandatory;
+    }
+
+    .tile {
+      scroll-snap-align: start;
+    }
+  }
+
+  @media (pointer: fine) {
+    .wall.is-enhanced {
+      cursor: grab;
+      user-select: none;
+    }
+  }
+
+  .wall.is-dragging,
+  .wall.is-dragging :global(*) {
+    cursor: grabbing;
+  }
+
+  .wall.is-dragging {
+    scroll-snap-type: none;
+  }
+
+  .tile {
+    transition:
+      opacity 0.5s ease,
+      scale 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .tile-frame :global(img) {
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Hovering a photo brings it forward: it zooms in a little and the others step back. */
+  @media (hover: hover) {
+    .wall:not(.is-dragging):has(.tile:hover) .tile:not(:hover) {
+      opacity: 0.55;
+    }
+
+    .wall:not(.is-dragging) .tile-frame:hover :global(img) {
+      transform: scale(1.04);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* While dragging, the photos shrink slightly, as if lifted off the board. */
+    .wall.is-dragging .tile {
+      scale: 0.97;
+    }
+
+    /* First appearance: the photos slide in one after another (the script sets data-reveal). */
+    .wall[data-reveal] .tile {
+      opacity: 0;
+      translate: 4rem 0;
+    }
+
+    .wall[data-reveal="in"] .tile {
+      opacity: 1;
+      translate: 0 0;
+      transition:
+        opacity 0.8s ease,
+        translate 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+      transition-delay: calc(min(var(--i), 6) * 90ms);
+    }
+  }
+
+  /* Lets the script see sideways swipes, while vertical scrolling and pinch-zoom still work. */
+  .stage {
+    touch-action: pan-y pinch-zoom;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .lightbox[open] {
+      animation: lightbox-in 0.3s ease-out;
+    }
+
+    .lightbox [data-slide]:not([hidden]) {
+      animation: lightbox-slide-in 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .lightbox[data-direction="next"] {
+      --slide-from: 2rem;
+    }
+
+    .lightbox[data-direction="prev"] {
+      --slide-from: -2rem;
+    }
+  }
+
+  @keyframes lightbox-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes lightbox-slide-in {
+    from {
+      opacity: 0;
+      translate: var(--slide-from, 0) 0;
+    }
+  }
+</style>
+
+<style is:global>
+  /* Keep the page behind the open lightbox from scrolling. */
+  html:has(.lightbox[open]) {
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  // Progressive enhancement: without this script the wall is a plain sideways-scrolling row of
+  // links to the large photos.
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+  const pad = (n: number) => String(n).padStart(2, "0")
+
+  const root = document.querySelector<HTMLElement>("[data-gallery]")
+  const wall = root?.querySelector<HTMLElement>("[data-wall]")
+  const controls = root?.querySelector<HTMLElement>("[data-controls]")
+  const dialog = root?.querySelector<HTMLDialogElement>("[data-lightbox]")
+
+  if (root && wall && controls && dialog) {
+    enhanceWall(root, wall, controls)
+    enhanceLightbox(wall, dialog)
+  }
+
+  function enhanceWall(root: HTMLElement, wall: HTMLElement, controls: HTMLElement) {
+    const tiles = [...wall.children] as HTMLElement[]
+    const prev = controls.querySelector<HTMLButtonElement>("[data-prev]")!
+    const next = controls.querySelector<HTMLButtonElement>("[data-next]")!
+    const maxScroll = () => wall.scrollWidth - wall.clientWidth
+
+    wall.classList.add("is-enhanced")
+
+    // The seam is stitched as far as the wall is scrolled; at either end a button is disabled.
+    let frame = 0
+    const update = () => {
+      const max = maxScroll()
+      controls.hidden = max <= 0
+      root.style.setProperty("--progress", String(max > 0 ? wall.scrollLeft / max : 0))
+      prev.disabled = wall.scrollLeft <= 1
+      next.disabled = wall.scrollLeft >= max - 1
+    }
+    const scheduleUpdate = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(update)
+    }
+    wall.addEventListener("scroll", scheduleUpdate, { passive: true })
+    window.addEventListener("resize", scheduleUpdate)
+    update()
+
+    // The buttons move to the start of the previous or next photo.
+    const scrollToTile = (direction: 1 | -1) => {
+      const inset = parseFloat(getComputedStyle(wall).paddingLeft)
+      const position = wall.scrollLeft
+      const starts = tiles.map((tile) => tile.offsetLeft - inset)
+      const target =
+        direction > 0
+          ? starts.find((start) => start > position + 1)
+          : starts.findLast((start) => start < position - 1)
+      wall.scrollTo({
+        left: target ?? (direction > 0 ? maxScroll() : 0),
+        behavior: reduceMotion.matches ? "auto" : "smooth",
+      })
+    }
+    prev.addEventListener("click", () => scrollToTile(-1))
+    next.addEventListener("click", () => scrollToTile(1))
+
+    // Dragging with the mouse, with a short glide after letting go. Touchscreens and trackpads
+    // scroll the wall natively.
+    let drag: {
+      startX: number
+      startScroll: number
+      lastX: number
+      lastTime: number
+      velocity: number // px per ms
+      moved: boolean
+    } | null = null
+    let glide = 0
+    let suppressClick = false
+
+    const startGlide = (initialVelocity: number) => {
+      let velocity = initialVelocity
+      let position = wall.scrollLeft
+      let last = performance.now()
+      const step = (now: number) => {
+        const elapsed = Math.min(now - last, 32)
+        last = now
+        position = Math.min(Math.max(position + velocity * elapsed, 0), maxScroll())
+        wall.scrollLeft = position
+        velocity *= 0.995 ** elapsed
+        if (Math.abs(velocity) > 0.02 && position > 0 && position < maxScroll()) {
+          glide = requestAnimationFrame(step)
+        }
+      }
+      glide = requestAnimationFrame(step)
+    }
+
+    const endDrag = (event: PointerEvent) => {
+      if (!drag) return
+      // Holding still before letting go means no glide.
+      const velocity = event.timeStamp - drag.lastTime < 80 ? drag.velocity : 0
+      const { moved } = drag
+      drag = null
+      if (!moved) return
+      wall.classList.remove("is-dragging")
+      // The drag ended on a photo: don't let the click that follows open it.
+      suppressClick = true
+      setTimeout(() => (suppressClick = false))
+      if (!reduceMotion.matches) startGlide(velocity)
+    }
+
+    wall.addEventListener("pointerdown", (event) => {
+      // Any new input takes over from a glide that is still running, and a new press can click.
+      cancelAnimationFrame(glide)
+      suppressClick = false
+      if (event.pointerType !== "mouse" || event.button !== 0) return
+      drag = {
+        startX: event.clientX,
+        startScroll: wall.scrollLeft,
+        lastX: event.clientX,
+        lastTime: event.timeStamp,
+        velocity: 0,
+        moved: false,
+      }
+    })
+
+    wall.addEventListener("pointermove", (event) => {
+      if (!drag) return
+      // The button was released outside the window.
+      if (!(event.buttons & 1)) return endDrag(event)
+      const distance = event.clientX - drag.startX
+      if (!drag.moved) {
+        // A few pixels of wobble still count as a click.
+        if (Math.abs(distance) < 6) return
+        drag.moved = true
+        wall.setPointerCapture(event.pointerId)
+        wall.classList.add("is-dragging")
+      }
+      const elapsed = event.timeStamp - drag.lastTime
+      if (elapsed > 0) {
+        const velocity = (drag.lastX - event.clientX) / elapsed
+        drag.velocity = 0.7 * velocity + 0.3 * drag.velocity
+      }
+      drag.lastX = event.clientX
+      drag.lastTime = event.timeStamp
+      wall.scrollLeft = drag.startScroll - distance
+    })
+
+    wall.addEventListener("pointerup", endDrag)
+    wall.addEventListener("pointercancel", endDrag)
+    wall.addEventListener("wheel", () => cancelAnimationFrame(glide), { passive: true })
+    // The browser's own drag-and-drop of images and links would cancel the drag.
+    wall.addEventListener("dragstart", (event) => event.preventDefault())
+    wall.addEventListener(
+      "click",
+      (event) => {
+        if (!suppressClick) return
+        event.preventDefault()
+        event.stopPropagation()
+      },
+      true,
+    )
+
+    // First appearance: the photos slide in one after another, but only when the wall is still
+    // below the fold (not when the page is reloaded halfway down).
+    if (!reduceMotion.matches && wall.getBoundingClientRect().top > window.innerHeight) {
+      wall.dataset.reveal = ""
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return
+          observer.disconnect()
+          wall.dataset.reveal = "in"
+          // Then drop the staggered timing, so hovering responds right away.
+          setTimeout(() => delete wall.dataset.reveal, 2000)
+        },
+        { threshold: 0.25 },
+      )
+      observer.observe(wall)
+    }
+  }
+
+  function enhanceLightbox(wall: HTMLElement, dialog: HTMLDialogElement) {
+    const links = [...wall.querySelectorAll<HTMLAnchorElement>("[data-index]")]
+    const slides = [...dialog.querySelectorAll<HTMLElement>("[data-slide]")]
+    const stage = dialog.querySelector<HTMLElement>("[data-stage]")!
+    const counter = dialog.querySelector<HTMLElement>("[data-counter]")!
+    const counterLabel = dialog.querySelector<HTMLElement>("[data-counter-label]")!
+    let current = 0
+
+    const show = (index: number, direction?: "prev" | "next") => {
+      current = (index + slides.length) % slides.length
+      slides.forEach((slide, i) => (slide.hidden = i !== current))
+      counter.textContent = `${pad(current + 1)} / ${pad(slides.length)}`
+      counterLabel.textContent = `Bild ${current + 1} von ${slides.length}`
+      if (direction) dialog.dataset.direction = direction
+      else delete dialog.dataset.direction
+    }
+    const step = (direction: 1 | -1) => show(current + direction, direction > 0 ? "next" : "prev")
+
+    links.forEach((link, index) =>
+      link.addEventListener("click", (event) => {
+        // Cmd/Ctrl-click still opens the photo in a new tab.
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+        event.preventDefault()
+        show(index)
+        dialog.showModal()
+      }),
+    )
+
+    dialog.querySelector("[data-prev]")!.addEventListener("click", () => step(-1))
+    dialog.querySelector("[data-next]")!.addEventListener("click", () => step(1))
+    dialog.querySelector("[data-close]")!.addEventListener("click", () => dialog.close())
+    dialog.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") step(-1)
+      else if (event.key === "ArrowRight") step(1)
+    })
+
+    // A sideways swipe on a touchscreen changes the photo; a tap or click next to it closes.
+    let swipeStart: number | null = null
+    let swiped = false
+    stage.addEventListener("pointerdown", (event) => {
+      swiped = false
+      if (event.pointerType !== "mouse") swipeStart = event.clientX
+    })
+    stage.addEventListener("pointerup", (event) => {
+      if (swipeStart === null) return
+      const distance = event.clientX - swipeStart
+      swipeStart = null
+      if (Math.abs(distance) < 50) return
+      swiped = true
+      step(distance < 0 ? 1 : -1)
+    })
+    stage.addEventListener("pointercancel", () => (swipeStart = null))
+    stage.addEventListener("click", (event) => {
+      if (swiped) return
+      const target = event.target
+      if (target === stage || (target instanceof Element && target.matches("[data-slide]"))) {
+        dialog.close()
+      }
+    })
+
+    // Back on the wall, focus and show the photo that was open last.
+    dialog.addEventListener("close", () => {
+      const link = links[current]
+      link.focus({ preventScroll: true })
+      link.scrollIntoView({
+        block: "nearest",
+        inline: "nearest",
+        behavior: reduceMotion.matches ? "auto" : "smooth",
+      })
+    })
+  }
+</script>
