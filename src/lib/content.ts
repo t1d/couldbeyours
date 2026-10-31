@@ -122,32 +122,40 @@ export const gallery = {
   intro:
     "Einblicke in meine Arbeit: Stoffe, Details und fertige Stücke. Mehr aus dem Atelier-Alltag zeige ich auf Instagram.",
   instagramLabel: "Mehr auf Instagram",
-  // TODO: replace the placeholder photos and describe each one. Any number of images works;
-  // multiples of six fill the grid evenly (two columns on phones, three on larger screens).
+  // Next to the progress line under the photos: "drag" for mouse users, "swipe" on touchscreens.
+  hint: { drag: "Ziehen zum Blättern", swipe: "Wischen zum Blättern" },
+  // TODO: replace the placeholder photos, describe each one (alt) and give it a short caption.
+  // Any number of images works; the photo wall repeats its pattern of sizes after six.
   images: [
     {
       src: impression01,
       alt: "Nahaufnahme einer Naht an einem Leinenhemd, mit Stecknadeln fixiert.",
+      caption: "Leinenhemd, Naht im Detail",
     },
     {
       src: impression02,
       alt: "Stoffmuster in Salbeigrün, Sand und Naturweiss nebeneinander auf dem Arbeitstisch.",
+      caption: "Stoffe in Salbei, Sand und Naturweiss",
     },
     {
       src: impression03,
       alt: "Ein fertiges Kleid an der Schneiderpuppe im Tageslicht.",
+      caption: "Kleid auf Mass",
     },
     {
       src: impression04,
       alt: "Die Nähmaschine im Atelier, daneben Garnrollen in warmen Farben.",
+      caption: "Die Nähmaschine",
     },
     {
       src: impression05,
       alt: "Hände kürzen den Saum einer Jeans.",
+      caption: "Jeans kürzen",
     },
     {
       src: impression06,
       alt: "Blick ins Atelier mit Zuschneidetisch und Kleiderstange.",
+      caption: "Das Atelier",
     },
   ],
 }
