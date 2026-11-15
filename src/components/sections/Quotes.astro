@@ -1,0 +1,160 @@
+---
+// Sprüche: one quote at a time, centred, changing on its own with a soft cross-fade. The change
+// waits while the pointer is on the quote or the section is off screen, and a sideways swipe moves
+// on. Without JavaScript, or when the visitor asks for reduced motion, all quotes are simply
+// listed one below the other.
+import Section from "@/components/Section.astro"
+import SectionHeading from "@/components/SectionHeading.astro"
+import { quotes } from "@/lib/content"
+
+const headingId = "sprueche-titel"
+---
+
+<Section tone="tint" aria-labelledby={headingId} wrapClass="text-center" data-quotes>
+  <SectionHeading
+    eyebrow={quotes.eyebrow}
+    title={quotes.title}
+    emphasis={quotes.emphasis}
+    id={headingId}
+  />
+
+  <div class="mx-auto mt-14 max-w-3xl md:mt-16">
+    <span
+      class="mark block font-heading text-[7rem] leading-none text-sage select-none"
+      aria-hidden="true"
+    >
+      “
+    </span>
+    <div class="stage" data-stage>
+      {quotes.items.map((quote) => (
+        <figure class:list={["quote", { caps: quote.style === "caps" }]} data-quote>
+          <blockquote lang={quote.lang}>
+            <p>{quote.text}</p>
+          </blockquote>
+          <figcaption class="mt-8 text-xs font-medium tracking-[0.25em] text-ink-muted uppercase">
+            {quote.author}
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</Section>
+
+<style>
+  .mark {
+    height: 3.5rem;
+  }
+
+  .quote blockquote {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 3.6vw, 2.75rem);
+    font-weight: 500;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  /* The second voice, after the quote cards Svenja collected: spaced capitals in the text face. */
+  .quote.caps blockquote {
+    font-family: var(--font-sans);
+    font-size: clamp(1.125rem, 2.2vw, 1.625rem);
+    font-weight: 300;
+    line-height: 1.5;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .quote + .quote {
+    margin-top: 4.5rem;
+  }
+
+  /* With the script running, the quotes lie on top of each other and only one shows; the stage is
+     as tall as the longest of them, so nothing below it moves when the quote changes. */
+  .stage.is-enhanced {
+    display: grid;
+    touch-action: pan-y pinch-zoom;
+  }
+
+  .stage.is-enhanced .quote {
+    grid-area: 1 / 1;
+    margin-top: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.9s ease,
+      visibility 0s 0.9s;
+  }
+
+  .stage.is-enhanced .quote.is-active {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 0.9s ease,
+      visibility 0s;
+  }
+</style>
+
+<script>
+  const SECONDS_PER_QUOTE = 8
+
+  const stage = document.querySelector<HTMLElement>("[data-quotes] [data-stage]")
+  const quotes = [...(stage?.querySelectorAll<HTMLElement>("[data-quote]") ?? [])]
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+
+  if (stage && quotes.length > 1 && !reduceMotion.matches) {
+    let current = 0
+    let timer = 0
+    let onScreen = false
+    let pointerOn = false
+
+    const show = (index: number) => {
+      current = (index + quotes.length) % quotes.length
+      quotes.forEach((quote, i) => quote.classList.toggle("is-active", i === current))
+    }
+
+    // One timer at a time; it only runs while the quote can be seen and nobody is reading it.
+    const schedule = () => {
+      clearTimeout(timer)
+      if (!onScreen || pointerOn || document.hidden) return
+      timer = window.setTimeout(() => {
+        show(current + 1)
+        schedule()
+      }, SECONDS_PER_QUOTE * 1000)
+    }
+
+    stage.classList.add("is-enhanced")
+    show(0)
+
+    new IntersectionObserver(
+      ([entry]) => {
+        onScreen = entry.isIntersecting
+        schedule()
+      },
+      { threshold: 0.5 },
+    ).observe(stage)
+    document.addEventListener("visibilitychange", schedule)
+
+    stage.addEventListener("pointerenter", (event) => {
+      pointerOn = event.pointerType === "mouse"
+      schedule()
+    })
+    stage.addEventListener("pointerleave", () => {
+      pointerOn = false
+      schedule()
+    })
+
+    // A sideways swipe on a touchscreen moves on, too.
+    let swipeStart: number | null = null
+    stage.addEventListener("pointerdown", (event) => {
+      if (event.pointerType !== "mouse") swipeStart = event.clientX
+    })
+    stage.addEventListener("pointerup", (event) => {
+      if (swipeStart === null) return
+      const distance = event.clientX - swipeStart
+      swipeStart = null
+      if (Math.abs(distance) < 50) return
+      show(current + (distance < 0 ? 1 : -1))
+      schedule()
+    })
+    stage.addEventListener("pointercancel", () => (swipeStart = null))
+  }
+</script>

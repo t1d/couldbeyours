@@ -11,6 +11,15 @@ export default defineConfig({
   // TODO: replace with the real domain once it is connected.
   site: "https://couldbeyours.ch",
 
+  // Photos from the Instagram feed are fetched while building (src/lib/instagram.ts) and optimised
+  // like the local ones; only these hosts may be fetched.
+  image: {
+    remotePatterns: [
+      { protocol: "https", hostname: "**.cdninstagram.com" },
+      { protocol: "https", hostname: "**.fbcdn.net" },
+    ],
+  },
+
   vite: {
     plugins: [tailwindcss()],
   },

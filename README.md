@@ -3,8 +3,8 @@
 Website for a tailoring atelier in Switzerland: a marketing/portfolio site now, a small shop later.
 German first.
 
-**Status:** Phase 1. The home page is a one-pager (hero, Über mich, Angebot, Impressionen, Kontakt)
-with Impressum and Datenschutz as separate pages. Copy, contact details and images are still
+**Status:** Phase 1. The home page is a one-pager (hero, Haltung, Über mich, Angebot, Sprüche,
+Impressionen, Kontakt) with Impressum and Datenschutz as separate pages. Copy, contact details and images are still
 placeholders, see [Editing content](#editing-content).
 
 ## Stack
@@ -17,7 +17,8 @@ placeholders, see [Editing content](#editing-content).
 | CI        | GitHub Actions: typecheck, lint, format check, build                         |
 | Node      | 24 LTS, pinned in `.nvmrc` (used locally, in CI, and by Cloudflare's builds) |
 
-There is no server code, database or secret yet.
+There is no server code or database. The only secret is the Instagram access token, a build
+variable that is read while the site is built (see [Instagram](#instagram)).
 
 ## Getting started
 
@@ -58,23 +59,37 @@ Run `npm run check` before pushing; if it passes locally, CI will pass.
 src/
   pages/                one file per route (index.astro → /, impressum.astro → /impressum/)
   layouts/              page shells (<html>, <head> with SEO tags, header, footer)
-  components/           site components; interactive ones are React .tsx files
+  components/           shared pieces: Section (a band of the page), SectionHeading, Wordmark,
+                        LogoHeart, Intro, header, footer, PhotoImage, LegalPage
   components/sections/  the sections of the home page, in page order
   components/icons/     icons Lucide does not ship (brand glyphs)
   components/ui/        shadcn/ui components (generated, then owned by us)
   lib/content.ts        all copy, contact details, links and image imports
+  lib/legal.ts          the texts of Impressum and Datenschutz
+  lib/instagram.ts      fetches the newest Instagram posts while the site is built
   lib/                  other helpers
+  scripts/              client scripts of the gallery (photo wall, lightbox) and the shared
+                        "reduce motion" check
   assets/images/        photos, optimised at build time by astro:assets
-  styles/               global.css: Tailwind setup, fonts and theme tokens
+  styles/               global.css: Tailwind setup, fonts, theme tokens, buttons and the page grid
 public/                 files served as-is (favicons, Open Graph image)
 wrangler.jsonc          Cloudflare deployment config
-.github/                CI workflow
+.github/                CI workflow and the daily rebuild
 ```
 
-The site ships almost no JavaScript: everything is static HTML except a few inline lines that close
-the mobile menu (which itself uses the native popover API) and a small script that lets visitors
-drag the photo wall in Impressionen and opens its photos large. Both work without it, just more
-plainly. Reach for a React island only when a feature really needs client-side state.
+The site ships little JavaScript, and every part of it is an enhancement: the page reads and works
+without it, just more plainly. What there is:
+
+- `sections/Quotes.astro`: the Sprüche change on their own every eight seconds, with a cross-fade.
+  The change waits while the pointer is on a quote; a swipe moves on. Without JavaScript, or with
+  "reduce motion" on, all quotes are listed one below the other.
+- `sections/Gallery.astro` with `scripts/photo-wall.ts` and `scripts/lightbox.ts`: dragging the
+  photo wall (with buttons) and the lightbox.
+- `SiteHeader.astro`: a few lines that close the mobile menu (itself a native popover).
+
+Everything else that moves is CSS: the intro with the logo, the heart that beats when the logo in
+the header is hovered, hover states. All of it rests under the system setting "reduce motion". Reach
+for a React island only when a feature really needs client-side state.
 
 Adding a shadcn/ui component: `npx shadcn@latest add <name>`, then `npm run format`, because
 generated files don't follow our Prettier style.
@@ -84,9 +99,15 @@ generated files don't follow our Prettier style.
 - **Text, services, prices, contact details, links:** `src/lib/content.ts`. Components only read
   from there. Placeholders are marked `TODO`; `grep -rn TODO src astro.config.mjs` lists what is
   still open before launch (including the domain in `astro.config.mjs`).
+- **Sprüche:** the `quotes` list in `content.ts`. Add, remove or reorder entries freely;
+  `style: "caps"` sets a quote in spaced capitals, `lang` marks one that is not in German.
+- **Headings:** `emphasis` next to a `title` names the part set in italics. It must match the
+  title's wording exactly; leave it out for a plain heading.
 - **Photos:** replace the files in `src/assets/images/` (keep the names, or change the imports at
   the top of `content.ts`) and update the alt texts next to them. Originals can be full-size
   camera files; the build generates AVIF/WebP in several widths. Portrait 4:5 suits every slot.
+  The photos of the gallery ("Impressionen") come from Instagram as soon as the account is
+  connected; the ones in `content.ts` are the stand-ins until then.
 - **Sharing image:** `public/og-image.jpg`, 1200 × 630 px.
 - **Colours:** the brand palette at the top of `:root` in `src/styles/global.css`. All components
   use these tokens, so changing a value there changes the whole site. Keep text colours at a
@@ -95,6 +116,39 @@ generated files don't follow our Prettier style.
   wordmark, as on the flyer), self-hosted via Fontsource packages and set in `@theme` in
   `global.css`. Swapping one means installing another `@fontsource*/*` package and updating the
   import, the `--font-*` token and the preload in `layouts/main.astro`.
+
+## Instagram
+
+The gallery ("Impressionen") shows the newest posts of the atelier's Instagram account. The posts
+are fetched **while the site is built** with the official Instagram API (`src/lib/instagram.ts`),
+downloaded and optimised like the other photos, and served from this site. Visitors never connect to
+Instagram unless they click a link, so the "no cookies, no tracking" promise of the privacy page
+still holds. Photos open in the lightbox; a video shows its cover photo and links to the post.
+
+Without a token, or when Instagram does not answer, the gallery shows the stand-in photos from
+`content.ts`. The build never fails because of Instagram.
+
+**One-time setup (about 15 minutes, by the owner of the Instagram account):**
+
+1. The account must be a _professional_ account (Business or Creator, free): Instagram app →
+   Settings → Account type and tools → Switch to professional account.
+2. Create an app at <https://developers.facebook.com/apps> (type "Business"), add the product
+   **Instagram** and open **API setup with Instagram login**.
+3. Under "Generate access tokens", add the account and click **Generate token**. Copy the token; it
+   is valid for 60 days. No app review is needed, because the app only reads the owner's own account.
+4. In Cloudflare: Workers & Pages → `couldbeyours` → Settings → Build → **Variables and secrets** →
+   add `INSTAGRAM_ACCESS_TOKEN` with the token (as a secret).
+5. To show new posts without anyone touching the site: Settings → Build → **Deploy hooks** → create
+   a hook for the `main` branch and copy its URL. In GitHub: Settings → Secrets and variables →
+   Actions → new secret `CLOUDFLARE_DEPLOY_HOOK_URL`. `.github/workflows/rebuild.yml` then
+   rebuilds the site every morning.
+
+To try it locally, copy `.env.example` to `.env`, fill in the token and run `npm run dev`.
+
+**Keeping the token alive.** Every production build asks Instagram to extend the token by another
+60 days, so a daily rebuild keeps it valid. If the gallery ever falls back to the stand-in photos,
+look at the build log in Cloudflare (lines starting with `[instagram]`): an expired token has to be
+generated again as in step 3 and replaced in Cloudflare. Not verified against a real account yet.
 
 ## How changes reach production
 

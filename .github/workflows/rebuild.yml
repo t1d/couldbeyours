@@ -1,0 +1,30 @@
+name: Rebuild site
+
+# The Instagram photos in the gallery are fetched while the site is built (src/lib/instagram.ts),
+# so new posts only appear after a build. This workflow starts one every morning through a
+# Cloudflare deploy hook. Without the secret it does nothing.
+# Setup: README → Instagram.
+
+on:
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  rebuild:
+    name: rebuild
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger the Cloudflare build
+        env:
+          DEPLOY_HOOK_URL: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$DEPLOY_HOOK_URL" ]; then
+            echo "CLOUDFLARE_DEPLOY_HOOK_URL is not set: nothing to do."
+            exit 0
+          fi
+          curl --fail --silent --show-error --request POST "$DEPLOY_HOOK_URL" > /dev/null
+          echo "Build started."
