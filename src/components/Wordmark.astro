@@ -1,0 +1,17 @@
+---
+// The "could be yours" wordmark: the hand-drawn heart, then the name in the flyer's typewriter
+// face. The size comes from the caller (font-size classes); the heart follows it. The look itself
+// is .wordmark in global.css.
+import type { HTMLAttributes } from "astro/types"
+import LogoHeart from "@/components/LogoHeart.astro"
+import { site } from "@/lib/content"
+
+type Props = HTMLAttributes<"span">
+
+const { class: className, ...props } = Astro.props
+---
+
+<span class:list={["wordmark", className]} {...props}>
+  <LogoHeart />
+  <span class="wordmark-name">{site.name}</span>
+</span>

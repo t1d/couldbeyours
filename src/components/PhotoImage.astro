@@ -1,0 +1,41 @@
+---
+// A photo of the gallery as a responsive picture. Photos from Instagram are remote files, whose
+// size Astro has to measure; local ones already carry theirs.
+import { Picture } from "astro:assets"
+import type { Photo } from "@/lib/content"
+
+interface Props {
+  photo: Photo
+  widths: number[]
+  sizes: string
+  class?: string
+}
+
+const { photo, widths, sizes, class: className } = Astro.props
+const { src, alt } = photo
+---
+
+{typeof src === "string" ? (
+  <Picture
+    {src}
+    {alt}
+    {widths}
+    {sizes}
+    class={className}
+    formats={["avif", "webp"]}
+    fallbackFormat="jpeg"
+    inferSize
+    loading="lazy"
+  />
+) : (
+  <Picture
+    {src}
+    {alt}
+    {widths}
+    {sizes}
+    class={className}
+    formats={["avif", "webp"]}
+    fallbackFormat="jpeg"
+    loading="lazy"
+  />
+)}

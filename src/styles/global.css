@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/cormorant-garamond";
+@import "@fontsource-variable/cormorant-garamond/wght-italic.css";
 @import "@fontsource-variable/jost";
 @import "@fontsource/courier-prime/700.css";
 
@@ -19,6 +20,7 @@
   --color-sage: var(--sage);
   --color-sage-deep: var(--sage-deep);
   --color-sage-light: var(--sage-light);
+  --color-footer: var(--footer);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -70,6 +72,7 @@
   --sage: #8e9b8d; /* accent: lines and underlines only, too light for text (2.9:1) */
   --sage-deep: #47594a; /* buttons, links, focus ring, 7.5:1 (6.6:1, 5.3:1), --paper on it 7.5:1 */
   --sage-light: #d4dad3; /* the flyer's sage: large surfaces */
+  --footer: #3a403b; /* the closing band: a soft charcoal with a hint of sage, a step lighter than --ink */
 
   --background: var(--paper);
   --foreground: var(--ink);
@@ -95,6 +98,9 @@
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.25rem; /* near-square corners: calm and timeless */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  /* The hand-drawn dashes of the flyer, as a mask tile (.seam). */
+  --seam: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='10' viewBox='0 0 240 10'><path d='M2 4.4Q8 4.4 14 5.3M23 4.2Q29 4.1 36 5.0M44 4.3Q49 4.9 54 4.9M61 5.2Q67 5.6 72 5.8M81 4.2Q90 4.7 99 5.6M106 4.7Q112 4.8 117 5.6M126 4.8Q133 4.5 141 5.1M148 5.3Q153 4.9 159 4.9M168 4.6Q175 5.3 182 5.5M189 5.0Q197 5.6 204 5.7M212 4.3Q221 4.8 231 4.9' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/></svg>");
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -161,11 +167,245 @@
   h3 {
     @apply font-heading font-medium text-balance;
   }
+  /* The emphasised word of a heading: the serif's italic in the brand green. */
+  h2 em {
+    color: var(--sage-deep);
+  }
+  /* Dark sections (class on-ink): the focus ring turns white, the green one would not show. */
+  .on-ink {
+    --ring: var(--paper);
+  }
   :focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 3px;
   }
   ::selection {
     @apply bg-sage-light text-ink;
+  }
+}
+
+/* ---------------------------------------------------------------------------------------------
+   Page grid
+   --------------------------------------------------------------------------------------------- */
+
+/* One container for the header, every section and the footer: 72rem wide at most, with a margin of
+   20px on a phone and 32px from the "sm" breakpoint up. */
+:root {
+  --page-max: 72rem;
+  --page-pad: 1.25rem;
+}
+
+@media (min-width: 40rem) {
+  :root {
+    --page-pad: 2rem;
+  }
+}
+
+/* In the components layer, so a Tailwind utility on the element still wins (e.g. "hidden"). */
+@layer components {
+  .wrap {
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding-inline: var(--page-pad);
+  }
+
+  /* ---------------------------------------------------------------------------------------------
+     Wordmark and labels
+     --------------------------------------------------------------------------------------------- */
+
+  /* "could be yours" in the flyer's typewriter face, the heart to its left and on the same line
+     (Wordmark.astro). The heart beats once when a wordmark link is hovered. */
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    font-family: var(--font-logo);
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .wordmark svg {
+    flex: none;
+    width: auto;
+    height: 0.8em;
+  }
+
+  /* Small labels in the typewriter face: channel names and the appointments card. */
+  .label {
+    font-family: var(--font-logo);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-transform: lowercase;
+  }
+
+  /* ---------------------------------------------------------------------------------------------
+     Buttons and links
+     --------------------------------------------------------------------------------------------- */
+
+  /* The one main button: on hover the ink rises from the bottom edge and the arrow steps to the
+     right; on press the button gives a little. On dark bands (.on-ink) it is turned round: light
+     on dark. */
+  .btn {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    border: 1px solid var(--sage-deep);
+    border-radius: var(--radius);
+    background:
+      linear-gradient(var(--ink), var(--ink)) 0 100% / 100% 0 no-repeat,
+      var(--sage-deep);
+    padding: 0 1.5rem;
+    color: var(--paper);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition:
+      background-size 0.45s var(--ease-out),
+      border-color 0.45s var(--ease-out),
+      color 0.3s ease,
+      scale 0.15s ease;
+  }
+
+  .btn svg {
+    width: 1rem;
+    height: 1rem;
+    flex: none;
+    transition: translate 0.45s var(--ease-out);
+  }
+
+  .btn:hover,
+  .btn:focus-visible {
+    border-color: var(--ink);
+    background-size:
+      100% 100%,
+      auto;
+  }
+
+  .btn:hover svg {
+    translate: 0.25rem 0;
+  }
+
+  .btn:active {
+    scale: 0.98;
+  }
+
+  .btn-sm {
+    min-height: 2.5rem;
+    padding: 0 1.125rem;
+    font-size: 0.6875rem;
+  }
+
+  .on-ink .btn {
+    border-color: var(--paper);
+    background:
+      linear-gradient(var(--sage-light), var(--sage-light)) 0 100% / 100% 0 no-repeat,
+      var(--paper);
+    color: var(--ink);
+  }
+
+  .on-ink .btn:hover,
+  .on-ink .btn:focus-visible {
+    border-color: var(--sage-light);
+  }
+
+  /* Square icon buttons (photo wall and lightbox), with the same corners as .btn. */
+  .btn-round {
+    display: inline-flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid color-mix(in oklab, currentColor 25%, transparent);
+    border-radius: var(--radius);
+    transition:
+      border-color 0.3s ease,
+      background-color 0.3s ease,
+      color 0.3s ease,
+      scale 0.15s ease;
+  }
+
+  .btn-round:hover:not(:disabled) {
+    border-color: var(--ink);
+    background-color: var(--ink);
+    color: var(--paper);
+  }
+
+  .btn-round:active:not(:disabled) {
+    scale: 0.94;
+  }
+
+  .btn-round:disabled {
+    opacity: 0.3;
+  }
+
+  /* Makes a small text link easier to hit with a finger: the tap area reaches past the text to
+     the 44px a phone needs, without moving anything. */
+  .tap {
+    position: relative;
+  }
+
+  .tap::before {
+    position: absolute;
+    inset: -0.75rem -0.5rem;
+    content: "";
+  }
+
+  /* Links draw their underline from the left on hover and focus. */
+  .draw {
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    padding-bottom: 0.2em;
+    transition:
+      background-size 0.35s var(--ease-out),
+      color 0.3s ease;
+  }
+
+  .draw:hover,
+  .draw:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  /* The hand-drawn dashes from the flyer, repeated sideways and used as a mask over the text
+     colour (Seam.astro). Only the top of the footer uses them. */
+  .seam {
+    mask: var(--seam) 0 50% / auto 100% repeat-x;
+  }
+}
+
+/* The heart beats once when the wordmark in the header is hovered. */
+@keyframes beat {
+  0%,
+  100% {
+    scale: 1;
+  }
+  18% {
+    scale: 1.22;
+  }
+  36% {
+    scale: 0.96;
+  }
+  54% {
+    scale: 1.12;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:hover > .wordmark svg {
+    animation: beat 0.9s var(--ease-out);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn svg,
+  .btn-round,
+  .draw {
+    transition: none;
   }
 }

@@ -2,40 +2,45 @@
 import { Picture } from "astro:assets"
 import { ArrowRight } from "lucide-react"
 import LogoHeart from "@/components/LogoHeart.astro"
-import { buttonVariants } from "@/components/ui/button"
-import { hero, site } from "@/lib/content"
-import { cn } from "@/lib/utils"
-
-// When the name wraps on narrow screens, the heart stays with the last word instead of ending up
-// alone on a line.
-const lastSpace = site.name.lastIndexOf(" ")
-const nameStart = site.name.slice(0, lastSpace + 1)
-const nameEnd = site.name.slice(lastSpace + 1)
+import Wordmark from "@/components/Wordmark.astro"
+import { hero } from "@/lib/content"
 ---
 
-<section class="mx-auto max-w-6xl px-5 pt-10 pb-16 sm:px-8 md:pt-16 lg:grid lg:grid-cols-12 lg:items-end lg:gap-12 lg:pb-24">
+<section
+  aria-labelledby="hero-titel"
+  class="wrap pt-10 pb-16 md:pt-16 lg:grid lg:grid-cols-12 lg:items-end lg:gap-12 lg:pb-24"
+>
   <div class="lg:col-span-6 lg:pb-10">
-    <h1 class="font-logo text-5xl leading-none font-bold sm:text-6xl lg:text-[2.75rem] xl:text-5xl">
-      {nameStart}
-      <span class="inline-flex items-center gap-[0.3em] whitespace-nowrap">
-        {nameEnd}
-        <LogoHeart class="h-[0.8em] w-auto" />
+    <h1 id="hero-titel">
+      <!-- The name is as wide as its column allows: the heart and 14 letters come to about 9.5em,
+           so 10cqi keeps them on one line at every screen width. -->
+      <span class="name block">
+        <Wordmark />
+      </span>
+      <span class="mt-4 block text-3xl font-light tracking-[0.15em] sm:text-4xl">
+        {hero.tagline}
       </span>
     </h1>
-    <p class="mt-4 text-3xl font-light tracking-[0.15em] sm:text-4xl">{hero.tagline}</p>
     <p class="mt-8 max-w-md text-lg leading-relaxed text-ink-muted">{hero.lead}</p>
-    <a
-      href={hero.cta.href}
-      class={cn(
-        buttonVariants({ size: "lg" }),
-        // cva only appends className; cn() resolves the conflicts with the base button classes.
-        // Full-strength focus ring with a gap, since the default 50 % ring is too faint here.
-        "mt-8 h-12 gap-2 px-6 text-sm tracking-wide hover:bg-ink focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-      )}
-    >
-      {hero.cta.label}
-      <ArrowRight data-icon="inline-end" strokeWidth={1.5} aria-hidden="true" />
-    </a>
+
+    <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
+      <a href={hero.cta.href} class="btn max-sm:w-full">
+        {hero.cta.label}
+        <ArrowRight strokeWidth={1.5} aria-hidden="true" />
+      </a>
+      <a href={hero.secondary.href} class="draw tap text-sm tracking-wide hover:text-sage-deep">
+        {hero.secondary.label}
+      </a>
+    </div>
+
+    <ul class="mt-8 flex flex-wrap gap-x-7 gap-y-2 text-sm text-ink-muted">
+      {hero.facts.map((fact) => (
+        <li class="flex items-center gap-2.5">
+          <LogoHeart class="h-3 w-auto text-sage-deep" />
+          {fact}
+        </li>
+      ))}
+    </ul>
   </div>
 
   <div class="-mx-5 mt-12 sm:mx-0 lg:col-span-6 lg:mt-0">
@@ -52,3 +57,13 @@ const nameEnd = site.name.slice(lastSpace + 1)
     />
   </div>
 </section>
+
+<style>
+  .name {
+    container-type: inline-size;
+  }
+
+  .name :global(.wordmark) {
+    font-size: clamp(1.75rem, 10cqi, 3.5rem);
+  }
+</style>

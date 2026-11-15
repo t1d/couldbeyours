@@ -1,0 +1,25 @@
+---
+// A band of the home page: full width with a background, and the page container inside it. Every
+// section uses this, so spacing and widths are set in one place.
+import type { HTMLAttributes } from "astro/types"
+
+interface Props extends HTMLAttributes<"section"> {
+  /** Background of the band: the white page, the flyer's sage or its lighter tint. */
+  tone?: "paper" | "sage" | "tint"
+  /** Vertical space inside the band: "tight" for the lighter bands (the statement). */
+  space?: "normal" | "tight"
+  /** Extra classes for the container inside the band, e.g. a grid. */
+  wrapClass?: string
+}
+
+const { tone = "paper", space = "normal", wrapClass, class: className, ...props } = Astro.props
+
+const tones = { paper: "", sage: "bg-sage-light", tint: "bg-paper-deep" }
+const spaces = { normal: "py-20 md:py-28", tight: "py-16 md:py-24" }
+---
+
+<section class:list={[tones[tone], className]} {...props}>
+  <div class:list={["wrap", spaces[space], wrapClass]}>
+    <slot />
+  </div>
+</section>
