@@ -6,6 +6,7 @@
 // optimises them at build time (resizing, AVIF/WebP), so originals can be large camera files.
 // The alt texts describe the intended photo; adjust them when the real photo is in place.
 
+import type { ImageMetadata } from "astro"
 import heroImage from "@/assets/images/hero.jpg"
 import portraitImage from "@/assets/images/svenja.jpg"
 import impression01 from "@/assets/images/impression-01.jpg"
@@ -43,12 +44,23 @@ export const nav = [
   { label: "Kontakt", href: `/#${anchors.contact}` },
 ]
 
+// The one main action of the site, used in the header, the hero and the mobile menu.
+export const cta = { label: "Termin vereinbaren", href: `/#${anchors.contact}` }
+
+// Shown wherever the atelier's hours come up: on the hero's round stamp, in the mobile menu, in
+// the contact section and in the footer.
+export const appointments = "Termine nach Vereinbarung"
+
 export const hero = {
-  // The atelier name (site.name) is the main heading; the tagline sits right below it, as on the
-  // flyer, and the lead continues it ("Atelier …für handgefertigte Unikate").
+  // The atelier name (site.name) is the main heading and types itself in on load; the tagline sits
+  // right below it, as on the flyer, and the lead continues it ("Atelier …für handgefertigte
+  // Unikate").
   tagline: "Atelier",
   lead: "…für handgefertigte Unikate, Schnitt & Design, Accessoires, individuelle Änderungen und Reparaturen",
-  cta: { label: "Kontakt aufnehmen", href: `#${anchors.contact}` },
+  cta,
+  secondary: { label: "Angebot ansehen", href: `#${anchors.services}` },
+  // Hard facts under the buttons; both are stated again further down the page.
+  facts: ["Erstgespräch kostenlos", "Änderungen ab CHF 20"],
   image: {
     src: heroImage,
     // TODO: replace the placeholder photo and describe it here.
@@ -56,13 +68,22 @@ export const hero = {
   },
 }
 
+// The statement between hero and about: one sentence in large type.
+export const statement = {
+  text: "Mich begeistern Kleider, die bleiben – Stücke, die gut sitzen, lange halten und eine Geschichte erzählen.",
+  // Signs the sentence, next to a small heart.
+  author: "Svenja",
+}
+
 export const about = {
   eyebrow: "Über mich",
   title: "Hallo, ich bin Svenja.",
+  // The part of the title set in italics; must match the title's wording exactly.
+  emphasis: "Svenja.",
   // TODO: replace with Svenja's own story; the facts below are invented placeholders.
   paragraphs: [
     "Schon als Kind sass ich am liebsten neben der Nähmaschine meiner Grossmutter. Aus der Neugier von damals ist ein Beruf geworden: Ich habe Bekleidungsgestalterin gelernt und in verschiedenen Ateliers Erfahrung gesammelt, bevor ich mit could be yours meinen eigenen Raum eröffnet habe.",
-    "Mich begeistern Kleider, die bleiben – Stücke, die gut sitzen, lange halten und eine Geschichte erzählen. Darum nehme ich mir Zeit: fürs Zuhören, fürs genaue Messen und für die kleinen Details, die man erst auf den zweiten Blick sieht.",
+    "Ich nehme mir Zeit: fürs Zuhören, fürs genaue Messen und für die kleinen Details, die man erst auf den zweiten Blick sieht.",
     "Ob ein neuer Saum für die Lieblingshose oder ein Kleid von Grund auf: Ich freue mich auf dich und deine Ideen.",
   ],
   image: {
@@ -79,9 +100,16 @@ export type Service = {
   price?: string
 }
 
-export const services: { eyebrow: string; title: string; intro: string; items: Service[] } = {
+export const services: {
+  eyebrow: string
+  title: string
+  emphasis: string
+  intro: string
+  items: Service[]
+} = {
   eyebrow: "Angebot",
   title: "Was ich für dich tun kann",
+  emphasis: "dich",
   // TODO: final wording.
   intro:
     "Jedes Stück ist anders. Die Preise sind Richtwerte – was es genau kostet, besprechen wir gemeinsam, bevor ich mit der Arbeit beginne.",
@@ -110,49 +138,108 @@ export const services: { eyebrow: string; title: string; intro: string; items: S
   ],
 }
 
+// Sprüche: quotes Svenja likes, shown one at a time between Angebot and Impressionen; they change
+// on their own. Any number works. `style: "caps"` sets a quote in spaced capitals instead of the
+// serif face; `lang` is only needed when a quote is not in German (for screen readers).
+export type Quote = { text: string; author: string; style?: "serif" | "caps"; lang?: string }
+
+export const quotes = {
+  eyebrow: "Sprüche",
+  title: "Worte, die mich begleiten",
+  emphasis: "begleiten",
+  items: [
+    {
+      text: "Das Geheimnis der Eleganz liegt in der Schlichtheit der Dinge.",
+      author: "Christian Dior",
+    },
+    {
+      text: "Ein gut geschnittenes Kleid steht jeder Frau.",
+      author: "Coco Chanel",
+      style: "caps",
+    },
+    {
+      text: "Every day is a fashion show, and the world is the runway.",
+      author: "Coco Chanel",
+      lang: "en",
+    },
+    {
+      text: "Minimalismus ist der Schlüssel zu wahrer Eleganz.",
+      author: "Coco Chanel",
+      style: "caps",
+    },
+    {
+      text: "If you want to be original, be ready to be copied.",
+      author: "Coco Chanel",
+      lang: "en",
+    },
+  ] satisfies Quote[],
+}
+
 export const instagram = {
   handle: "_.couldbeyours._",
   url: "https://www.instagram.com/_.couldbeyours._/",
+  // How many of the newest posts the gallery shows once the account is connected (see README).
+  feedLimit: 9,
+}
+
+/** A photo of the gallery wall: one of the images below, or a post from Instagram. */
+export type Photo = {
+  /** An imported local image, or the address of a remote one (Instagram). */
+  src: ImageMetadata | string
+  alt: string
+  caption: string
+  /** Set for posts that cannot open in the lightbox (videos): the tile links there instead. */
+  link?: string
 }
 
 export const gallery = {
   eyebrow: "Impressionen",
   title: "Aus dem Atelier",
+  emphasis: "Atelier",
   // TODO: final wording.
   intro:
     "Einblicke in meine Arbeit: Stoffe, Details und fertige Stücke. Mehr aus dem Atelier-Alltag zeige ich auf Instagram.",
   instagramLabel: "Mehr auf Instagram",
-  // TODO: replace the placeholder photos and describe each one. Any number of images works;
-  // multiples of six fill the grid evenly (two columns on phones, three on larger screens).
+  // Next to the buttons under the photos: "drag" for mouse users, "swipe" on touchscreens.
+  hint: { drag: "Ziehen zum Blättern", swipe: "Wischen zum Blättern" },
+  // Shown until the Instagram account is connected, and whenever Instagram cannot be reached.
+  // TODO: replace the placeholder photos, describe each one (alt) and give it a short caption.
+  // Any number of images works; the photo wall repeats its pattern of sizes after three.
   images: [
     {
       src: impression01,
       alt: "Nahaufnahme einer Naht an einem Leinenhemd, mit Stecknadeln fixiert.",
+      caption: "Leinenhemd, Naht im Detail",
     },
     {
       src: impression02,
       alt: "Stoffmuster in Salbeigrün, Sand und Naturweiss nebeneinander auf dem Arbeitstisch.",
+      caption: "Stoffe in Salbei, Sand und Naturweiss",
     },
     {
       src: impression03,
       alt: "Ein fertiges Kleid an der Schneiderpuppe im Tageslicht.",
+      caption: "Kleid auf Mass",
     },
     {
       src: impression04,
       alt: "Die Nähmaschine im Atelier, daneben Garnrollen in warmen Farben.",
+      caption: "Die Nähmaschine",
     },
     {
       src: impression05,
       alt: "Hände kürzen den Saum einer Jeans.",
+      caption: "Jeans kürzen",
     },
     {
       src: impression06,
       alt: "Blick ins Atelier mit Zuschneidetisch und Kleiderstange.",
+      caption: "Das Atelier",
     },
-  ],
+  ] satisfies Photo[],
 }
 
-const email = "atelier@couldbeyours.ch"
+export const email = "atelier@couldbeyours.ch"
 const whatsappNumber = "41792191408" // international format, digits only (wa.me link)
 // "41792191408" → "+41 79 219 14 08" (Swiss number format)
 const whatsappDisplay = whatsappNumber.replace(
@@ -160,11 +247,12 @@ const whatsappDisplay = whatsappNumber.replace(
   "+$1 $2 $3 $4 $5",
 )
 // TODO: real address; this one is a placeholder.
-const address = { street: "Musterstrasse 1", city: "8000 Musterort" }
+export const address = { street: "Musterstrasse 1", city: "8000 Musterort" }
 
 export const contact = {
   eyebrow: "Kontakt",
   title: "Schreib mir",
+  emphasis: "mir",
   // TODO: final wording.
   intro:
     "Am einfachsten erreichst du mich per WhatsApp oder E-Mail. Erzähl mir kurz, worum es geht – gerne mit einem Foto. Ich melde mich innert ein bis zwei Arbeitstagen.",
@@ -192,125 +280,23 @@ export const contact = {
     mapLabel: "Auf der Karte zeigen",
     mapUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${address.street}, ${address.city}`)}`,
   },
-  hours: {
-    title: "Öffnungszeiten",
-    // TODO: fixed opening hours, if any, e.g. "Di–Fr, 9–12 Uhr".
-    lines: ["Termine nach Vereinbarung"],
+  // TODO: add fixed opening hours here, if there ever are any, e.g. "Di–Fr, 9–12 Uhr".
+  appointments: {
+    eyebrow: "Termine",
+    title: appointments,
+    text: "Schreib mir, und wir finden einen Termin, der dir passt.",
+    cta: {
+      label: "Termin anfragen",
+      href: `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Hallo Svenja, ich möchte gerne einen Termin vereinbaren.")}`,
+    },
   },
 }
 
 export const footer = {
   // TODO: add the town once it is final, as in site.title.
-  tagline: "Atelier",
+  tagline: `Atelier · ${appointments}`,
   links: [
     { label: "Impressum", href: "/impressum/" },
     { label: "Datenschutz", href: "/datenschutz/" },
-  ],
-}
-
-// Legal pages. A block in `body` is either a paragraph (string) or a group of lines that belong
-// together, such as an address (string[]).
-export type LegalPage = {
-  title: string
-  description: string
-  updated: string
-  sections: { heading: string; body: (string | string[])[] }[]
-}
-
-// TODO: Svenja's surname, legal form and, if registered, the UID number.
-const owner = "Svenja Muster"
-const postalAddress = [site.name, owner, address.street, address.city, "Schweiz"]
-
-// TODO: have both legal texts reviewed before launch. They are careful placeholders for a small
-// Swiss business without cookies or tracking, not legal advice.
-export const impressum: LegalPage = {
-  title: "Impressum",
-  description: "Impressum des Ateliers could be yours.",
-  updated: "Oktober 2026", // TODO: date of the final version
-  sections: [
-    {
-      heading: "Kontaktadresse",
-      body: [postalAddress, `E-Mail: ${email}`],
-    },
-    {
-      heading: "Inhaberin",
-      body: [`${owner}, Einzelunternehmen`],
-    },
-    {
-      heading: "Handelsregister",
-      // TODO: or "Eingetragen im Handelsregister des Kantons …, UID CHE-…".
-      body: ["Nicht im Handelsregister eingetragen."],
-    },
-    {
-      heading: "Haftungsausschluss",
-      body: [
-        "Ich stelle die Inhalte dieser Website mit Sorgfalt zusammen, übernehme aber keine Gewähr für ihre Richtigkeit, Vollständigkeit und Aktualität. Preise sind Richtwerte; verbindlich ist, was wir gemeinsam vereinbaren.",
-        "Diese Website verweist auf Angebote Dritter (zum Beispiel Instagram oder Google Maps). Für deren Inhalte sind ausschliesslich die jeweiligen Betreiber verantwortlich.",
-      ],
-    },
-    {
-      heading: "Urheberrecht",
-      // TODO: credit the photographer, if the photos are not Svenja's own.
-      body: [
-        "Texte und Fotos auf dieser Website gehören could be yours. Wer sie verwenden möchte, fragt bitte vorher nach.",
-      ],
-    },
-  ],
-}
-
-export const privacy: LegalPage = {
-  title: "Datenschutzerklärung",
-  description: "Wie could be yours mit Personendaten umgeht.",
-  updated: "Oktober 2026", // TODO: date of the final version
-  sections: [
-    {
-      heading: "Verantwortlich",
-      body: [
-        "Diese Datenschutzerklärung erklärt, welche Personendaten ich bearbeite, wenn du diese Website besuchst oder mit mir Kontakt aufnimmst. Sie richtet sich nach dem Schweizer Datenschutzgesetz (DSG).",
-        postalAddress,
-        `E-Mail: ${email}`,
-      ],
-    },
-    {
-      heading: "Keine Cookies, kein Tracking",
-      body: [
-        "Diese Website setzt keine Cookies und verwendet keine Analyse- oder Werbewerkzeuge. Schriften und Bilder werden direkt von dieser Website geladen; Inhalte von Drittanbietern wie Google Fonts, eingebettete Karten oder Instagram-Feeds gibt es nicht.",
-      ],
-    },
-    {
-      heading: "Hosting und Server-Logdaten",
-      // TODO: confirm the transfer safeguard Cloudflare offers at launch (e.g. Swiss-U.S. Data
-      // Privacy Framework certification or standard contractual clauses) and name it here.
-      body: [
-        "Die Website wird über Cloudflare, Inc. (USA) ausgeliefert. Damit die Seite sicher und zuverlässig funktioniert, werden bei jedem Aufruf technisch notwendige Daten bearbeitet, zum Beispiel IP-Adresse, Datum und Uhrzeit, die aufgerufene Seite sowie Angaben zu Browser und Betriebssystem.",
-        "Diese Daten können auch ausserhalb der Schweiz bearbeitet werden, insbesondere in den USA. Cloudflare sichert dabei vertraglich ein angemessenes Datenschutzniveau zu.",
-      ],
-    },
-    {
-      heading: "Kontakt per E-Mail, WhatsApp oder Instagram",
-      body: [
-        "Wenn du mir schreibst, bearbeite ich deine Angaben (zum Beispiel Name, Kontaktdaten, Nachricht und Fotos), um deine Anfrage zu beantworten und den Auftrag auszuführen.",
-        "WhatsApp und Instagram gehören zu Meta Platforms. Wenn du diese Dienste nutzt, gelten zusätzlich deren Datenschutzbestimmungen, und Daten können in die USA übermittelt werden. Wenn du das nicht möchtest, schreib mir am besten per E-Mail.",
-      ],
-    },
-    {
-      heading: "Links zu anderen Websites",
-      body: [
-        "Die Links zu Instagram, WhatsApp und Google Maps sind einfache Verweise. Erst wenn du darauf klickst, wird eine Verbindung zum jeweiligen Anbieter aufgebaut; ab dann gilt dessen Datenschutzerklärung.",
-      ],
-    },
-    {
-      heading: "Aufbewahrung",
-      body: [
-        "Ich bewahre Personendaten nur so lange auf, wie es für die Bearbeitung deiner Anfrage oder deines Auftrags nötig ist oder das Gesetz es verlangt, etwa für Buchhaltungsunterlagen.",
-      ],
-    },
-    {
-      heading: "Deine Rechte",
-      body: [
-        `Du kannst jederzeit Auskunft über deine bei mir gespeicherten Daten verlangen und sie berichtigen oder löschen lassen. Schreib mir dafür an ${email}.`,
-        "Wenn du findest, dass ich deine Daten nicht korrekt bearbeite, kannst du dich an den Eidgenössischen Datenschutz- und Öffentlichkeitsbeauftragten (EDÖB) wenden.",
-      ],
-    },
   ],
 }

@@ -1,1 +1,5 @@
 package-lock.json
+.agents
+.claude
+.taste-skill
+skills-lock.json

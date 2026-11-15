@@ -1,23 +1,50 @@
 ---
-import { Picture } from "astro:assets"
-import { ArrowUpRight } from "lucide-react"
+// Impressionen: the newest posts of the atelier's Instagram account (src/lib/instagram.ts), or the
+// photos from content.ts while the account is not connected. The photos sit on a wall that scrolls
+// sideways; a photo opens large in a lightbox, a video links to its post on Instagram.
+import { getImage } from "astro:assets"
+import { ArrowLeft, ArrowRight, ArrowUpRight, X } from "lucide-react"
 import { Instagram } from "@/components/icons/instagram"
+import PhotoImage from "@/components/PhotoImage.astro"
 import SectionHeading from "@/components/SectionHeading.astro"
-import { anchors, gallery, instagram } from "@/lib/content"
+import { anchors, gallery, instagram, type Photo } from "@/lib/content"
+import { latestPhotos } from "@/lib/instagram"
 
 const headingId = `${anchors.gallery}-titel`
+
+const feed = await latestPhotos(instagram.feedLimit)
+const photos: Photo[] = feed.length > 0 ? feed : gallery.images
+
+// Every photo is the same height, its width set by its shape, so the row has one floor and one
+// ceiling. The pattern repeats after three photos.
+const shapes = ["aspect-4/5", "aspect-square", "aspect-3/4"]
+
+// Without JavaScript a tile links straight to a large version of its photo; with it, the photo
+// opens in the lightbox. Videos have no large photo: they link to the post.
+const viewable = photos.filter((photo) => !photo.link)
+const large = await Promise.all(
+  viewable.map((photo) =>
+    typeof photo.src === "string"
+      ? getImage({ src: photo.src, inferSize: true, width: 1600, format: "webp" })
+      : getImage({ src: photo.src, width: 1600, format: "webp" }),
+  ),
+)
 ---
 
-<section id={anchors.gallery} aria-labelledby={headingId} class="bg-paper-deep">
-  <div class="mx-auto max-w-6xl px-5 py-20 sm:px-8 md:py-28">
-    <div class="md:flex md:items-end md:justify-between md:gap-12">
-      <div>
-        <SectionHeading eyebrow={gallery.eyebrow} title={gallery.title} id={headingId} />
-        <p class="mt-6 max-w-md leading-relaxed text-ink-muted">{gallery.intro}</p>
-      </div>
+<section id={anchors.gallery} aria-labelledby={headingId} class="bg-paper-deep" data-gallery>
+  <div class="wrap pt-20 md:pt-28 lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-12">
+    <SectionHeading
+      class="lg:col-span-6"
+      eyebrow={gallery.eyebrow}
+      title={gallery.title}
+      emphasis={gallery.emphasis}
+      id={headingId}
+    />
+    <div class="mt-6 lg:col-span-6 lg:mt-0 lg:justify-self-end">
+      <p class="max-w-md leading-relaxed text-ink-muted">{gallery.intro}</p>
       <a
         href={instagram.url}
-        class="group mt-6 inline-flex shrink-0 items-center gap-2 text-sm tracking-wide text-sage-deep underline decoration-sage underline-offset-8 hover:text-ink md:mt-0"
+        class="group tap mt-4 inline-flex items-center gap-2 text-sm tracking-wide text-sage-deep underline decoration-sage underline-offset-8 hover:text-ink"
       >
         <Instagram className="size-4" strokeWidth={1.5} aria-hidden="true" />
         {gallery.instagramLabel} <span class="sr-only">(@{instagram.handle})</span>
@@ -28,20 +55,224 @@ const headingId = `${anchors.gallery}-titel`
         />
       </a>
     </div>
-
-    <ul class="mt-12 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 lg:gap-6">
-      {gallery.images.map((image) => (
-        <li>
-          <Picture
-            src={image.src}
-            alt={image.alt}
-            formats={["avif", "webp"]}
-            widths={[300, 450, 600, 900]}
-            sizes="(min-width: 1152px) 360px, (min-width: 1024px) 31vw, 50vw"
-            class="aspect-4/5 w-full object-cover"
-          />
-        </li>
-      ))}
-    </ul>
   </div>
+
+  <!-- The wall scrolls sideways: natively with touch and trackpads, by dragging with a mouse (see
+       the script). It is as wide as the screen, but its first photo starts on the container's left
+       line, and the next photo always peeks in on the right. "relative" keeps the screen-reader-only
+       texts inside the tiles from stretching the page. -->
+  <ul class="wall relative mt-12 flex items-start gap-5 overflow-x-auto pb-4 sm:gap-6" data-wall>
+    {photos.map((photo, index) => {
+      const position = viewable.indexOf(photo)
+      return (
+        <li class="tile shrink-0">
+          <a
+            href={photo.link ?? large[position].src}
+            class="tile-frame block overflow-hidden"
+            data-index={photo.link ? undefined : position}
+            target={photo.link ? "_blank" : undefined}
+            rel={photo.link ? "noopener" : undefined}
+          >
+            <PhotoImage
+              {photo}
+              widths={[320, 480, 640, 960]}
+              sizes="(min-width: 1024px) 22rem, 70vw"
+              class={`h-[clamp(17rem,40svh,22.5rem)] w-auto object-cover ${shapes[index % shapes.length]}`}
+            />
+            <span class="sr-only">
+              {photo.link ? "(Video auf Instagram ansehen)" : "(Grossansicht)"}
+            </span>
+          </a>
+        </li>
+      )
+    })}
+  </ul>
+
+  <!-- Shown by the script when the photos do not all fit: a hint, and buttons for anyone who would
+       rather click than drag. -->
+  <div class="wrap pb-20 md:pb-28">
+    <div class="mt-6 flex items-center justify-between gap-5" data-controls hidden>
+      <p class="text-sm text-ink-muted">
+        <span class="pointer-coarse:hidden">{gallery.hint.drag}</span>
+        <span class="hidden pointer-coarse:inline">{gallery.hint.swipe}</span>
+      </p>
+      <div class="flex gap-2">
+        <button type="button" class="btn-round" data-prev>
+          <ArrowLeft className="size-5" strokeWidth={1.5} aria-hidden="true" />
+          <span class="sr-only">Zurückblättern</span>
+        </button>
+        <button type="button" class="btn-round" data-next>
+          <ArrowRight className="size-5" strokeWidth={1.5} aria-hidden="true" />
+          <span class="sr-only">Weiterblättern</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <dialog
+    class="lightbox m-0 h-dvh max-h-none w-full max-w-none border-0 bg-paper p-0 text-ink"
+    aria-label={gallery.title}
+    data-lightbox
+  >
+    <div class="grid h-full grid-rows-[auto_minmax(0,1fr)_auto]">
+      <div class="wrap flex h-16 w-full items-center justify-end">
+        <button
+          type="button"
+          class="-mr-2 inline-flex size-11 items-center justify-center"
+          data-close
+        >
+          <X className="size-6" strokeWidth={1.5} aria-hidden="true" />
+          <span class="sr-only">Schliessen</span>
+        </button>
+      </div>
+
+      <div class="stage px-5 sm:px-8" data-stage>
+        {viewable.map((photo) => (
+          <figure class="flex h-full flex-col items-center justify-center" data-slide hidden>
+            <PhotoImage
+              {photo}
+              widths={[800, 1200, 1600, 2000]}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              class="h-auto max-h-[calc(100dvh-12rem)] w-auto max-w-full object-contain"
+            />
+            {photo.caption && (
+              <figcaption class="mt-4 text-center text-sm text-ink-muted">
+                {photo.caption}
+              </figcaption>
+            )}
+          </figure>
+        ))}
+      </div>
+
+      <div class="flex items-center justify-center gap-6 py-5">
+        <button type="button" class="btn-round" data-prev>
+          <ArrowLeft className="size-5" strokeWidth={1.5} aria-hidden="true" />
+          <span class="sr-only">Vorheriges Bild</span>
+        </button>
+        <p class="min-w-20 text-center font-logo text-sm font-bold" aria-live="polite">
+          <span aria-hidden="true" data-counter></span>
+          <span class="sr-only" data-counter-label></span>
+        </p>
+        <button type="button" class="btn-round" data-next>
+          <ArrowRight className="size-5" strokeWidth={1.5} aria-hidden="true" />
+          <span class="sr-only">Nächstes Bild</span>
+        </button>
+      </div>
+    </div>
+  </dialog>
 </section>
+
+<style>
+  /* The wall is as wide as the screen; its first photo starts on the container's left line. */
+  .wall {
+    --inset: max(var(--page-pad), calc((100% - var(--page-max)) / 2 + var(--page-pad)));
+    padding-inline: var(--inset);
+    scroll-padding-inline: var(--inset);
+    overscroll-behavior-x: contain;
+  }
+
+  /* Once the script runs, the buttons take over from the scrollbar. */
+  .wall.is-enhanced {
+    scrollbar-width: none;
+  }
+
+  .wall.is-enhanced::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Touchscreens: one swipe moves photo by photo. Mouse: free dragging with a glide. */
+  @media (pointer: coarse) {
+    .wall {
+      scroll-snap-type: x mandatory;
+    }
+
+    .tile {
+      scroll-snap-align: start;
+    }
+  }
+
+  @media (pointer: fine) {
+    .wall.is-enhanced {
+      cursor: grab;
+      user-select: none;
+    }
+  }
+
+  .wall.is-dragging,
+  .wall.is-dragging :global(*) {
+    cursor: grabbing;
+  }
+
+  .wall.is-dragging {
+    scroll-snap-type: none;
+  }
+
+  .tile-frame :global(img) {
+    transition: transform 0.9s var(--ease-out);
+  }
+
+  /* A photo zooms in a little while the pointer is on it. */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .wall:not(.is-dragging) .tile-frame:hover :global(img) {
+      transform: scale(1.04);
+    }
+  }
+
+  /* Lets the script see sideways swipes, while vertical scrolling and pinch-zoom still work. */
+  .stage {
+    touch-action: pan-y pinch-zoom;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .lightbox[open] {
+      animation: lightbox-in 0.3s ease-out;
+    }
+
+    .lightbox [data-slide]:not([hidden]) {
+      animation: lightbox-slide-in 0.5s var(--ease-out);
+    }
+
+    .lightbox[data-direction="next"] {
+      --slide-from: 2rem;
+    }
+
+    .lightbox[data-direction="prev"] {
+      --slide-from: -2rem;
+    }
+  }
+
+  @keyframes lightbox-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes lightbox-slide-in {
+    from {
+      opacity: 0;
+      translate: var(--slide-from, 0) 0;
+    }
+  }
+</style>
+
+<style is:global>
+  /* Keep the page behind the open lightbox from scrolling. */
+  html:has(.lightbox[open]) {
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  import { enhanceLightbox } from "@/scripts/lightbox"
+  import { enhanceWall } from "@/scripts/photo-wall"
+
+  const gallery = document.querySelector<HTMLElement>("[data-gallery]")
+  const wall = gallery?.querySelector<HTMLElement>("[data-wall]")
+  const controls = gallery?.querySelector<HTMLElement>("[data-controls]")
+  const dialog = gallery?.querySelector<HTMLDialogElement>("[data-lightbox]")
+
+  if (wall && controls && dialog) {
+    enhanceWall(wall, controls)
+    enhanceLightbox(wall, dialog)
+  }
+</script>

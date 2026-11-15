@@ -24,3 +24,6 @@ npm-debug.log*
 
 # editor settings (shared VS Code settings in .vscode/ are committed on purpose)
 .idea/
+
+# taste-skill working files (screenshots, check state)
+.taste-skill/

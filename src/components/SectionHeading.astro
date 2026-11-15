@@ -1,16 +1,31 @@
 ---
-interface Props {
+import type { HTMLAttributes } from "astro/types"
+
+interface Props extends HTMLAttributes<"div"> {
   /** Small label above the heading, usually the section name. */
   eyebrow: string
   title: string
-  /** id of the <h2>, referenced by the section's aria-labelledby. */
+  /** Part of the title to set in italics; must appear in the title exactly as written. */
+  emphasis?: string
+  /** id of the heading, referenced by the section's aria-labelledby. */
   id: string
 }
 
-const { eyebrow, title, id } = Astro.props
+const { eyebrow, title, emphasis, id, class: className, ...props } = Astro.props
+
+// "Hallo, ich bin Svenja." with emphasis "Svenja." → ["Hallo, ich bin ", "Svenja.", ""]
+const at = emphasis ? title.indexOf(emphasis) : -1
+const [before, accent, after] =
+  emphasis && at >= 0
+    ? [title.slice(0, at), emphasis, title.slice(at + emphasis.length)]
+    : [title, "", ""]
 ---
 
-<p class="text-xs tracking-[0.25em] text-ink-muted uppercase">{eyebrow}</p>
-<h2 {id} class="mt-4 text-4xl leading-tight sm:text-5xl">
-  {title}
-</h2>
+<div class={className} {...props}>
+  <p class="text-xs tracking-[0.25em] text-ink-muted uppercase">{eyebrow}</p>
+  <h2 {id} class="mt-4 text-4xl leading-tight sm:text-5xl">
+    {before}
+    {accent && <em>{accent}</em>}
+    {after}
+  </h2>
+</div>
